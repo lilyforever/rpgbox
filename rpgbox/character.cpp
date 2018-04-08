@@ -7,7 +7,7 @@ using namespace std;
 const double CHA_V = 0.1;
 
 Character::Character() {
-	m_posx = 96;
+	m_posx = 32;
 	m_posy = 32;
 	m_vx = 0;
 	m_vy = 0;
@@ -28,6 +28,7 @@ bool Character::loadFromFile(SDL_Renderer* renderer, string path) {
 		cout << "ÔØÈëÍ¼Æ¬Ê§°Ü" << endl;
 	}
 	else {
+		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
 		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 		if (newTexture == NULL) {
 			cout << "½«surface¸³¸øtextureÊ§°Ü" << endl;

@@ -14,7 +14,7 @@ const int PIXEL_HEIGHT = 32;
 
 
 int mapdata1[10][15] = {
-	18,18,18,18,18,18,18,18,18,18,18,18,55,55,18,
+	18,18,18,17,18,18,18,18,18,18,18,18,55,55,18,
 	18,17,18,17,17,17,17,17,17,17,17,17,55,55,18,
 	18,17,17,17,17,17,18,18,17,17,17,17,55,55,18,
 	18,17,17,17,18,18,18,18,18,17,17,55,55,17,18,
@@ -28,7 +28,7 @@ int mapdata1[10][15] = {
 };
 
 int walldata1[10][15] = {
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 	1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
 	1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1,
 	1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1,
@@ -41,8 +41,8 @@ int walldata1[10][15] = {
 };
 
 int triggerdata1[10][15] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -92,8 +92,47 @@ int triggerdata2[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+int mapdata3[10][15] = {
+	18,18,18,18,18,18,18,18,18,18,18,18,55,55,18,
+	18,17,17,17,17,17,17,17,17,17,17,17,55,55,18,
+	18,17,17,17,17,17,17,17,17,17,17,17,55,55,18,
+	18,17,17,17,17,17,17,17,17,17,17,55,55,17,18,
+	18,17,17,17,17,17,17,17,17,18,17,21,21,17,18,
+	18,17,17,17,17,17,17,17,17,18,55,55,55,17,18,
+	18,17,17,17,17,17,17,17,17,18,55,55,17,17,18,
+	18,17,17,17,17,17,17,17,17,55,55,17,17,17,18,
+	18,17,17,17,17,17,17,17,17,21,21,17,17,17,18,
+	18,18,18,17,18,18,18,18,18,55,55,18,18,18,18
+};
+
+int walldata3[10][15] = {
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+	1,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+	1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+};
+
+int triggerdata3[10][15] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
 string talktext = "hello,i'm lily.";
-SDL_Color talkcolor = { 0, 0, 0 };
+SDL_Color talkcolor = { 0, 255, 0 };
 
 SDL_Window* window = NULL;
 
@@ -106,9 +145,12 @@ Talk talk;
 
 MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1);
 MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2);
+MapTexture outTexture2 = MapTexture(mapdata3, walldata3, triggerdata3);
 void bound() {
 	outTexture.setnext(0,&inTexture);
+	outTexture.setnext(1, &outTexture2);
 	inTexture.setnext(0,&outTexture);
+	outTexture2.setnext(1, &outTexture);
 }
 Character cha;
 
@@ -147,7 +189,7 @@ bool init()
 		}
 		if (TTF_Init() == -1)
 		{
-			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+			cout << "字体库初始化失败" << endl;
 			success = false;
 		}
 	}
@@ -166,7 +208,7 @@ bool loadScene()
 		success = false;
 	}
 
-	if (!cha.loadFromFile(renderer, "cha.jpg"))
+	if (!cha.loadFromFile(renderer, "cha.png"))
 	{
 		std::cout << "加载人物图片失败" << std::endl;
 		success = false;
@@ -174,8 +216,8 @@ bool loadScene()
 
 	font = TTF_OpenFont("123.ttf",28);
 	if (!font) {
-		printf("TTF_OpenFont: %s\n", TTF_GetError());
-		// handle error
+		cout << "加载字体文件失败" << endl;
+		success = false;
 	}
 
 	if (!talk.loadtalkFromFont(font, renderer, talktext, talkcolor)) {
@@ -239,9 +281,9 @@ int main(int argc, char* argv[])
 			SDL_Rect* trigger[30];
 			for (int i = 0; i < 30; i++) {
 				trigger[i] = sceneTexture.gett(i);
-				if (trigger[i]) {
+				/*if (trigger[i]) {
 					cout << trigger[i]->x << endl;
-				}
+				}*/
 			}
 			SDL_Rect* wall = sceneTexture.getwall();
 			int jump = 100;
@@ -289,6 +331,7 @@ int main(int argc, char* argv[])
 					}
 				}
 				cha.render(renderer);
+				talk.render(renderer);
 				SDL_RenderPresent(renderer);
 			}
 		}

@@ -58,6 +58,9 @@ int MapTexture::initmap(MapTexture m) {
 		birth[i] = m.birth[i];
 		next[i] = m.next[i];
 	}
+	for (int i = 0; i < 30; i++) {
+		trigger[i] = NULL;
+	}
 	
 	wallnum = 0;
 
@@ -78,7 +81,7 @@ int MapTexture::initmap(MapTexture m) {
 				if (t>=0 && t< 30) {
 					Trigger[t] = { j * 32,i * 32,32,32 };
 					trigger[t] = &Trigger[t];
-					cout << trigger[t]->x<< triggerdata[i][j] <<endl;
+					cout << trigger[t]->x<<" " << "lalala" << triggerdata[i][j] <<endl;
 				}
 				else {
 					Birth[t - 30] = { j * 32,i * 32,32,32 };
