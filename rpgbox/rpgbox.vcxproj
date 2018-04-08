@@ -118,6 +118,7 @@
   <ItemGroup>
     <ClInclude Include="character.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="fight.h" />
     <ClInclude Include="loadimg.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="talk.h" />
@@ -125,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="character.cpp" />
     <ClCompile Include="collision.cpp" />
+    <ClCompile Include="fight.cpp" />
     <ClCompile Include="loadimg.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="talk.cpp" />

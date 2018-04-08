@@ -85,6 +85,8 @@ int Character::move(int x,int y, MapTexture* m, int jump) {
 		if (m->gett(i)) {
 			if (checkCollision(mCollision, *m->gett(i))) {
 				jump = i;
+				m_posx -= m_vx;
+				mCollision.x = m_posx;
 				return jump;
 			}
 		}
@@ -118,6 +120,8 @@ int Character::move(int x,int y, MapTexture* m, int jump) {
 		if (m->gett(i)) {
 			if (checkCollision(mCollision, *m->gett(i))) {
 				jump = i;
+				m_posy -= m_vy;
+				mCollision.y = m_posy;
 				return jump;
 			}
 		}

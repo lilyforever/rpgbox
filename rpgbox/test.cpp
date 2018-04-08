@@ -1,6 +1,8 @@
 #include "map.h"
 #include "character.h"
 #include "talk.h"
+#include "fight.h"
+#include <Windows.h>
 
 //包含了main函数
 
@@ -10,6 +12,7 @@ const int SCREEN_WIDTH = 480;
 const int SCREEN_HEIGHT = 320;
 const int PIXEL_WIDTH = 32;
 const int PIXEL_HEIGHT = 32;
+
 
 
 
@@ -82,7 +85,7 @@ int walldata2[10][15] = {
 int triggerdata2[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -97,7 +100,7 @@ int mapdata3[10][15] = {
 	18,17,17,17,17,17,17,17,17,17,17,17,55,55,18,
 	18,17,17,17,17,17,17,17,17,17,17,17,55,55,18,
 	18,17,17,17,17,17,17,17,17,17,17,55,55,17,18,
-	18,17,17,17,17,17,17,17,17,18,17,21,21,17,18,
+	18,17,17,17,0,17,17,17,17,18,17,21,21,17,18,
 	18,17,17,17,17,17,17,17,17,18,55,55,55,17,18,
 	18,17,17,17,17,17,17,17,17,18,55,55,17,17,18,
 	18,17,17,17,17,17,17,17,17,55,55,17,17,17,18,
@@ -123,7 +126,7 @@ int triggerdata3[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -131,8 +134,8 @@ int triggerdata3[10][15] = {
 	0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-string talktext = "hello,i'm lily.";
-SDL_Color talkcolor = { 0, 255, 0 };
+string bgwtext = "RPGBOX";
+SDL_Color bgwcolor = { 255,255,255 };
 
 SDL_Window* window = NULL;
 
@@ -141,7 +144,12 @@ SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
 
 MapTexture sceneTexture;
+Talk bgw;
 Talk talk;
+string talktext = "ops,this is a bug!";
+string talktext2 = "it should be fixed!";
+SDL_Color talkcolor = { 0,0,0, };
+
 
 MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1);
 MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2);
@@ -153,6 +161,7 @@ void bound() {
 	outTexture2.setnext(1, &outTexture);
 }
 Character cha;
+Fight fight;
 
 SDL_Rect sceneClips[100];
 //SDL_Rect wall[150];
@@ -214,13 +223,19 @@ bool loadScene()
 		success = false;
 	}
 
-	font = TTF_OpenFont("123.ttf",28);
+	if (!fight.loadFromFile(renderer, "fight.png"))
+	{
+		std::cout << "加载战斗图片失败" << std::endl;
+		success = false;
+	}
+
+	font = TTF_OpenFont("123.ttf",12);
 	if (!font) {
 		cout << "加载字体文件失败" << endl;
 		success = false;
 	}
 
-	if (!talk.loadtalkFromFont(font, renderer, talktext, talkcolor)) {
+	if (!bgw.loadtalkFromFont(font, renderer, bgwtext, bgwcolor)) {
 		cout << "加载对话文本失败" << endl;
 		success = false;
 	}
@@ -237,7 +252,7 @@ bool loadScene()
 	}
 
 
-
+	int r = bgw.setAlpha(63);
 	return success;
 }
 
@@ -287,6 +302,9 @@ int main(int argc, char* argv[])
 			}
 			SDL_Rect* wall = sceneTexture.getwall();
 			int jump = 100;
+			/*enum jumpto {
+
+			};*/
 
 			while (!quit)
 			{
@@ -300,39 +318,96 @@ int main(int argc, char* argv[])
 				}
 
 				jump = cha.move(SCREEN_WIDTH, SCREEN_HEIGHT, &sceneTexture, jump);
+				/*if (e.type == SDL_MOUSEBUTTONDOWN) {
+					cout << "鼠标按下" << endl;
+				}*/
 
 				if (jump < 10) {
-					cout << jump << endl;
+					//cout << jump << endl;
 					wallnum = sceneTexture.initmap(*sceneTexture.getnext(jump));
 					cha.setmposx(sceneTexture.getb(jump)->x);
 					cha.setmposy(sceneTexture.getb(jump)->y);
-					cout << "chuansongchenggong" << endl;
+					cout << "传送成功" << endl;
 					for (int i = 0; i < 30; i++) {
 						trigger[i] = sceneTexture.gett(i);
 					}
-					
 					wall = sceneTexture.getwall();
 					jump = 100;
-				}
 
-				if (jump >= 10 && jump < 20) {
-					jump = 100;
-				}
+					SDL_RenderClear(renderer);
 
-				if (jump >= 20 && jump < 30) {
-					jump = 100;
-				}
-
-				SDL_RenderClear(renderer);
-
-				for (int i = 0; i < 10; i++) {
-					for (int j = 0; j < 15; j++) {
-						sceneTexture.render(renderer, j*32, i*32, &sceneClips[sceneTexture.mapdata[i][j]]);
+					for (int i = 0; i < 10; i++) {
+						for (int j = 0; j < 15; j++) {
+							sceneTexture.render(renderer, j * 32, i * 32, &sceneClips[sceneTexture.mapdata[i][j]]);
+						}
 					}
+					cha.render(renderer);
+					bgw.render(renderer);
+					SDL_RenderPresent(renderer);
 				}
-				cha.render(renderer);
-				talk.render(renderer);
-				SDL_RenderPresent(renderer);
+
+				else if (jump >= 10 && jump < 20) {
+					talk.loadbackFromFile(renderer, "back.png");
+					talk.loadtalkFromFont(font, renderer, talktext, talkcolor);
+					talk.render(renderer);
+					SDL_RenderPresent(renderer);
+					Sleep(2000);
+					talk.loadbackFromFile(renderer, "back.png");
+					talk.loadtalkFromFont(font, renderer, talktext2, talkcolor);
+					talk.render(renderer);
+					SDL_RenderPresent(renderer);
+					SDL_RenderClear(renderer);
+					Sleep(2000);
+					jump = 100;
+
+					SDL_RenderClear(renderer);
+
+					for (int i = 0; i < 10; i++) {
+						for (int j = 0; j < 15; j++) {
+							sceneTexture.render(renderer, j * 32, i * 32, &sceneClips[sceneTexture.mapdata[i][j]]);
+						}
+					}
+					cha.render(renderer);
+					bgw.render(renderer);
+					SDL_RenderPresent(renderer);
+				}
+
+				else if (jump >= 20 && jump < 30) {
+					fight.render(renderer);
+					int x = cha.getmposx();
+					int y = cha.getmposy();
+					cha.setmposx(64);
+					cha.setmposy(180);
+					cha.render(renderer);
+					SDL_RenderPresent(renderer);
+					Sleep(2000);
+					cha.setmposx(x);
+					cha.setmposy(y);
+					jump = 100;
+
+					SDL_RenderClear(renderer);
+
+					for (int i = 0; i < 10; i++) {
+						for (int j = 0; j < 15; j++) {
+							sceneTexture.render(renderer, j * 32, i * 32, &sceneClips[sceneTexture.mapdata[i][j]]);
+						}
+					}
+					cha.render(renderer);
+					bgw.render(renderer);
+					SDL_RenderPresent(renderer);
+				}
+				else {
+					SDL_RenderClear(renderer);
+
+					for (int i = 0; i < 10; i++) {
+						for (int j = 0; j < 15; j++) {
+							sceneTexture.render(renderer, j * 32, i * 32, &sceneClips[sceneTexture.mapdata[i][j]]);
+						}
+					}
+					cha.render(renderer);
+					bgw.render(renderer);
+					SDL_RenderPresent(renderer);
+				}
 			}
 		}
 	}

@@ -79,7 +79,7 @@ int MapTexture::initmap(MapTexture m) {
 			if (triggerdata[i][j]) {
 				int t = triggerdata[i][j] - 1;
 				if (t>=0 && t< 30) {
-					Trigger[t] = { j * 32,i * 32,32,32 };
+					Trigger[t] = { j * 32+14,i * 32+14,4,4 };
 					trigger[t] = &Trigger[t];
 					cout << trigger[t]->x<<" " << "lalala" << triggerdata[i][j] <<endl;
 				}

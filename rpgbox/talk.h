@@ -26,12 +26,14 @@ public:
 	
 	Talk();
 	~Talk();
-	bool loadfaceFromFile(SDL_Renderer* renderer, std::string path);
+	bool loadbackFromFile(SDL_Renderer* renderer, std::string path);
 	bool loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk, SDL_Color talkcolor);
+	void handleEvent(SDL_Event& e);
 	void render(SDL_Renderer* renderer);
+	int Talk::setAlpha(Uint8 alpha);
 	void show();
 private:
-	SDL_Texture* facetexture;
+	SDL_Texture* backtexture;
 	SDL_Texture* talktexture;
 	std::string name;
 	std::string content;
