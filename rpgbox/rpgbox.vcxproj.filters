@@ -54,7 +54,7 @@
   <ItemGroup>
     <Library Include="..\sdllib\SDL2.lib" />
     <Library Include="..\sdllib\SDL2_image.lib" />
-    <Library Include="..\sdllib\SDL2_ttf.lib" />
     <Library Include="..\sdllib\SDL2main.lib" />
+    <Library Include="..\sdllib\SDL2_ttf.lib" />
   </ItemGroup>
 </Project>

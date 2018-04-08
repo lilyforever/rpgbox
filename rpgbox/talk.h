@@ -1,7 +1,13 @@
 #ifndef _TALK_H_
 #define _TALK_H_
 #include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_ttf.h"
+#include <iostream>
+#include <cmath>
 #include "loadimg.h"
+
+using namespace std;
 
 class Talk {
 public:
@@ -21,7 +27,7 @@ public:
 	Talk();
 	~Talk();
 	bool loadfaceFromFile(SDL_Renderer* renderer, std::string path);
-	bool loadtalkFromFile(SDL_Renderer* renderer, std::string path);
+	bool loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk, SDL_Color talkcolor);
 	void render(SDL_Renderer* renderer);
 	void show();
 private:

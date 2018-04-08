@@ -9,13 +9,31 @@ Talk::~Talk() {
 }
 
 bool Talk::loadfaceFromFile(SDL_Renderer* renderer, std::string path) {
-	bool b = loadtexture(mWidth,mHeight,facetexture, renderer, path);
+	bool b = loadtexture(facetexture, renderer, path);
 	return b;
 }
 
-bool Talk::loadtalkFromFile(SDL_Renderer* renderer, std::string path) {
-	bool b = loadtexture(mWidth, mHeight,talktexture, renderer, path);
-	return b;
+bool Talk::loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk, SDL_Color talkcolor) {
+	SDL_Texture* newTexture = NULL;
+
+	SDL_Surface* loadedSurface = TTF_RenderText_Solid(font, talk.c_str(), talkcolor);
+	if (loadedSurface == NULL) {
+		cout << "载入对话失败" << endl;
+	}
+	else {
+		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		if (newTexture == NULL) {
+			cout << "将surface赋给texture失败" << endl;
+		}
+		else {
+			//从surface中读取到宽和高
+			mWidth = loadedSurface->w;
+			mHeight = loadedSurface->h;
+		}
+		SDL_FreeSurface(loadedSurface);
+	}
+	talktexture = newTexture;
+	return talktexture != NULL;
 }
 
 void Talk::render(SDL_Renderer* renderer) {

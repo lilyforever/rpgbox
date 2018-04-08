@@ -1,10 +1,6 @@
-#include <stdio.h>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <iostream>
 #include "map.h"
 #include "character.h"
+#include "talk.h"
 
 //包含了main函数
 
@@ -96,11 +92,17 @@ int triggerdata2[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+string talktext = "hello,i'm lily.";
+SDL_Color talkcolor = { 0, 0, 0 };
+
 SDL_Window* window = NULL;
 
 SDL_Renderer* renderer = NULL;
 
+TTF_Font* font = NULL;
+
 MapTexture sceneTexture;
+Talk talk;
 
 MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1);
 MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2);
@@ -143,6 +145,11 @@ bool init()
 				success = false;
 			}
 		}
+		if (TTF_Init() == -1)
+		{
+			printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+			success = false;
+		}
 	}
 	return success;
 }
@@ -161,7 +168,18 @@ bool loadScene()
 
 	if (!cha.loadFromFile(renderer, "cha.jpg"))
 	{
-		std::cout << "加载场景图片失败" << std::endl;
+		std::cout << "加载人物图片失败" << std::endl;
+		success = false;
+	}
+
+	font = TTF_OpenFont("123.ttf",28);
+	if (!font) {
+		printf("TTF_OpenFont: %s\n", TTF_GetError());
+		// handle error
+	}
+
+	if (!talk.loadtalkFromFont(font, renderer, talktext, talkcolor)) {
+		cout << "加载对话文本失败" << endl;
 		success = false;
 	}
 
@@ -190,6 +208,9 @@ void close()
 	SDL_DestroyWindow(window);
 	window = NULL;
 	renderer = NULL;
+	TTF_CloseFont(font);
+	font = NULL;
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
