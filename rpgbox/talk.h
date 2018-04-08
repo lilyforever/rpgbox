@@ -1,4 +1,7 @@
-#pragma once
+#ifndef _TALK_H_
+#define _TALK_H_
+#include "SDL.h"
+#include "loadimg.h"
 
 class Talk {
 public:
@@ -17,8 +20,16 @@ public:
 	
 	Talk();
 	~Talk();
+	bool loadfaceFromFile(SDL_Renderer* renderer, std::string path);
+	bool loadtalkFromFile(SDL_Renderer* renderer, std::string path);
+	void render(SDL_Renderer* renderer);
 	void show();
 private:
-	int faceimg;
-	int talkimg;
+	SDL_Texture* facetexture;
+	SDL_Texture* talktexture;
+	std::string name;
+	std::string content;
+	int mWidth;
+	int mHeight;
 };
+#endif

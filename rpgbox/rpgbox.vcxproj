@@ -118,12 +118,14 @@
   <ItemGroup>
     <ClInclude Include="character.h" />
     <ClInclude Include="collision.h" />
+    <ClInclude Include="loadimg.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="talk.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp" />
     <ClCompile Include="collision.cpp" />
+    <ClCompile Include="loadimg.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="talk.cpp" />
     <ClCompile Include="test.cpp" />

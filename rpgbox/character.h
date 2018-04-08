@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include "collision.h"
 #include "map.h"
+#include "loadimg.h"
 class Character {
 public:
 	static const int CHA_WIDTH = 32;
@@ -16,7 +17,7 @@ public:
 	bool loadFromFile(SDL_Renderer* renderer, std::string path);
 	void free();
 	void handleEvent(SDL_Event& e);
-	bool move(int screenwidth, int screenheight, MapTexture* m, bool jump);
+	int move(int screenwidth, int screenheight, MapTexture* m, int jump);
 	void render(SDL_Renderer* renderer);
 	void setname(char* n);
 	void setsex(bool n);

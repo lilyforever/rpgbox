@@ -44,8 +44,25 @@ int walldata1[10][15] = {
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
-SDL_Rect portal1 = { 192, 160,32,32 };
-SDL_Rect birth1 = { 192,192,32,32 };
+int triggerdata1[10][15] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+
+
+SDL_Rect portal11 = { 192,160,32,32 };
+SDL_Rect* portal1[10] = { &portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11, };
+SDL_Rect birth11 = { 192,192,32,32 };
+SDL_Rect* birth1[10] = { &birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11, };
 
 int mapdata2[10][15] = {
 	0,0,1,2,2,2,2,2,2,2,2,1,0,0,0,
@@ -73,8 +90,23 @@ int walldata2[10][15] = {
 	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 };
 
-SDL_Rect portal2 = { 224, 256,32,32 };
-SDL_Rect birth2 = { 224,224,32,32 };
+int triggerdata2[10][15] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+SDL_Rect portal21 = { 224,256,32,32 };
+SDL_Rect* portal2[10] = { &portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21, };
+SDL_Rect birth21 = { 224,224,32,32 };
+SDL_Rect* birth2[10] = { &birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21, };
 
 SDL_Window* window = NULL;
 
@@ -82,11 +114,11 @@ SDL_Renderer* renderer = NULL;
 
 MapTexture sceneTexture;
 
-MapTexture outTexture = MapTexture(mapdata1,walldata1,&portal1,&birth1);
-MapTexture inTexture = MapTexture(mapdata2, walldata2, &portal2,&birth2);
+MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1, portal1,birth1);
+MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2, portal2,birth2);
 void bound() {
-	outTexture.setnext(&inTexture);
-	inTexture.setnext(&outTexture);
+	outTexture.setnext(0,&inTexture);
+	inTexture.setnext(0,&outTexture);
 }
 Character cha;
 
@@ -108,7 +140,7 @@ bool init()
 	}
 	else
 	{
-		window = SDL_CreateWindow("map test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		window = SDL_CreateWindow("rpgbox test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (window == NULL)
 		{
 			cout << "´°¿Ú´´½¨Ê§°Ü" << endl;
@@ -199,9 +231,16 @@ int main(int argc, char* argv[])
 			SDL_Event e;
 
 			int wallnum = sceneTexture.initmap(outTexture);
-			SDL_Rect* portal = sceneTexture.getp();
+			SDL_Rect* portal[10];
+			for (int i = 0; i < 10; i++) {
+				portal[i] = sceneTexture.getp(i);
+			}
+			SDL_Rect* trigger[30];
+			for (int i = 0; i < 30; i++) {
+				trigger[i] = sceneTexture.gett(i);
+			}
 			SDL_Rect* wall = sceneTexture.getwall();
-			bool jump = false;
+			int jump = 100;
 
 			while (!quit)
 			{
@@ -216,14 +255,22 @@ int main(int argc, char* argv[])
 
 				jump = cha.move(SCREEN_WIDTH, SCREEN_HEIGHT, &sceneTexture, jump);
 
-				if (jump) {
-					int wallnum = sceneTexture.initmap(*sceneTexture.getnext());
-					cha.setmposx(sceneTexture.getb()->x);
-					cha.setmposy(sceneTexture.getb()->y);
+				if (jump != 100) {
+					cout << jump << endl;
+					wallnum = sceneTexture.initmap(*sceneTexture.getnext(jump));
+					cha.setmposx(sceneTexture.getb(jump)->x);
+					cha.setmposy(sceneTexture.getb(jump)->y);
 					cout << "chuansongchenggong" << endl;
-					SDL_Rect* portal = sceneTexture.getp();
-					SDL_Rect* wall = sceneTexture.getwall();
-					jump = false;
+					for (int i = 0; i < 10; i++) {
+						portal[i] = sceneTexture.getp(i);
+						cout << portal[i]->x << " " << portal[i]->y << endl;
+					}
+					for (int i = 0; i < 30; i++) {
+						trigger[i] = sceneTexture.gett(i);
+					}
+					
+					wall = sceneTexture.getwall();
+					jump = 100;
 				}
 
 				SDL_RenderClear(renderer);

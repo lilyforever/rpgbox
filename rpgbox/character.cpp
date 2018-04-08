@@ -71,19 +71,22 @@ void Character::handleEvent(SDL_Event& e) {
 	}
 }
 
-bool Character::move(int x,int y, MapTexture* m, bool jump) {
+int Character::move(int x,int y, MapTexture* m, int jump) {
 	m_posx += m_vx;
 	mCollision.x = m_posx;
 	bool flag = true;
 
-	/*if ((m_posx == m->getp()->x)&&m_posy == m->getp()->y) {
+	/*if ((m_posx == m->gett()->x)&&m_posy == m->gett()->y) {
 		jump = true;
 		return jump;
 	}*/
-
-	if (checkCollision(mCollision, *m->getp())) {
-		jump = true;
-		return jump;
+	for (int i = 0; i < 10; i++) {
+		if (m->gett(i)) {
+			if (checkCollision(mCollision, *m->gett(i))) {
+				jump = i;
+				return jump;
+			}
+		}
 	}
 
 	if ((m_posx < 0) || (m_posx + CHA_WIDTH > x)) {
@@ -105,14 +108,18 @@ bool Character::move(int x,int y, MapTexture* m, bool jump) {
 	m_posy += m_vy;
 	mCollision.y = m_posy;
 
-	/*if ((m_posx == m->getp()->x) && m_posy == m->getp()->y) {
+	/*if ((m_posx == m->gett()->x) && m_posy == m->gett()->y) {
 		jump = true;
 		return jump;
 	}*/
 
-	if (checkCollision(mCollision, *m->getp())) {
-		jump = true;
-		return jump;
+	for (int i = 0; i < 10; i++) {
+		if (m->gett(i)) {
+			if (checkCollision(mCollision, *m->gett(i))) {
+				jump = i;
+				return jump;
+			}
+		}
 	}
 
 	if ((m_posy < 0) || (m_posy + CHA_HEIGHT > y)) {

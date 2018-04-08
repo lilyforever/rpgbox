@@ -3,12 +3,12 @@
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>
-
+#include "loadimg.h"
 class MapTexture {
 public:
 	//构造函数
 	MapTexture();
-	MapTexture(int(*m)[15], int(*w)[15], SDL_Rect* p, SDL_Rect* b);
+	MapTexture(int(*m)[15], int(*w)[15], int (*t)[15], SDL_Rect* p[10], SDL_Rect* b[10]);
 	//析构函数
 	~MapTexture();
 	//从指定路径读取图片
@@ -21,27 +21,29 @@ public:
 	//得到图片的尺寸
 	int getWidth();
 	int getHeight();
-	SDL_Rect* getp();
-	SDL_Rect* getb();
+	SDL_Rect* getp(int i);
+	SDL_Rect* getb(int i);
 	SDL_Rect* getwall();
+	SDL_Rect* gett(int i);
 	void setwallnum(int w);
 	int getwallnum();
 	//int** getmapdata();
 	int(*mapdata)[15];
 	int(*walldata)[15];
-	MapTexture* getnext();
-	void setnext(MapTexture* m);
+	int(*triggerdata)[15];
+	MapTexture* getnext(int i);
+	void setnext(int i,MapTexture* m);
 private:
 	//当前的texture
 	SDL_Texture* mTexture;
 	//图片的尺寸
 	int mWidth;
 	int mHeight;
-
-	SDL_Rect* portal;
-	SDL_Rect* birth;
+	SDL_Rect* trigger[30];
+	SDL_Rect* portal[10];
+	SDL_Rect* birth[10];
 	SDL_Rect wall[150];
 	int wallnum;
-	MapTexture* next;
+	MapTexture* next[10];
 };
 #endif

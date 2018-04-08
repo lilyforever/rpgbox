@@ -1,6 +1,9 @@
 #include "collision.h"
 
 bool checkCollision(SDL_Rect a, SDL_Rect b) {
+	if (!&b) {
+		return false;
+	}
 	int al, ar, at, ab, bl, br, bt, bb;
 	al = a.x;
 	ar = a.x + a.w;
