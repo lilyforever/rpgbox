@@ -57,10 +57,6 @@ int triggerdata1[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-
-
-SDL_Rect portal11 = { 192,160,32,32 };
-SDL_Rect* portal1[10] = { &portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11,&portal11, };
 SDL_Rect birth11 = { 192,192,32,32 };
 SDL_Rect* birth1[10] = { &birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11, };
 
@@ -103,8 +99,6 @@ int triggerdata2[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-SDL_Rect portal21 = { 224,256,32,32 };
-SDL_Rect* portal2[10] = { &portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21,&portal21, };
 SDL_Rect birth21 = { 224,224,32,32 };
 SDL_Rect* birth2[10] = { &birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21, };
 
@@ -114,8 +108,8 @@ SDL_Renderer* renderer = NULL;
 
 MapTexture sceneTexture;
 
-MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1, portal1,birth1);
-MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2, portal2,birth2);
+MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1,birth1);
+MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2, birth2);
 void bound() {
 	outTexture.setnext(0,&inTexture);
 	inTexture.setnext(0,&outTexture);
@@ -231,10 +225,6 @@ int main(int argc, char* argv[])
 			SDL_Event e;
 
 			int wallnum = sceneTexture.initmap(outTexture);
-			SDL_Rect* portal[10];
-			for (int i = 0; i < 10; i++) {
-				portal[i] = sceneTexture.getp(i);
-			}
 			SDL_Rect* trigger[30];
 			for (int i = 0; i < 30; i++) {
 				trigger[i] = sceneTexture.gett(i);
@@ -261,10 +251,6 @@ int main(int argc, char* argv[])
 					cha.setmposx(sceneTexture.getb(jump)->x);
 					cha.setmposy(sceneTexture.getb(jump)->y);
 					cout << "chuansongchenggong" << endl;
-					for (int i = 0; i < 10; i++) {
-						portal[i] = sceneTexture.getp(i);
-						cout << portal[i]->x << " " << portal[i]->y << endl;
-					}
 					for (int i = 0; i < 30; i++) {
 						trigger[i] = sceneTexture.gett(i);
 					}

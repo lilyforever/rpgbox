@@ -12,7 +12,7 @@ MapTexture::MapTexture() {
 	wallnum = 0;
 }
 
-MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15],  SDL_Rect* p[10], SDL_Rect* b[10]) {
+MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15], SDL_Rect* b[10]) {
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
@@ -21,7 +21,6 @@ MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15],  SDL_Rect* p[10], 
 	triggerdata = t;
 	wallnum = 0;
 	for (int i = 0; i < 10; i++) {
-		portal[i] = p[i];
 		birth[i] = b[i];
 		next[i] = NULL;
 	}
@@ -58,8 +57,8 @@ bool MapTexture::loadFromFile(SDL_Renderer* renderer, string path) {
 int MapTexture::initmap(MapTexture m) {
 	mapdata = m.mapdata;
 	walldata = m.walldata;
+	triggerdata = m.triggerdata;
 	for (int i = 0; i < 10; i++) {
-		portal[i] = m.portal[i];
 		birth[i] = m.birth[i];
 		next[i] = m.next[i];
 	}
@@ -75,10 +74,10 @@ int MapTexture::initmap(MapTexture m) {
 			}
 		}
 	}
-	SDL_Rect Trigger[30];
+	
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 15; j++) {
-			if (triggerdata[i][j]>0) {
+			if (triggerdata[i][j]) {
 				int t = triggerdata[i][j] - 1;
 				Trigger[t] = { j * 32,i * 32,32,32 };
 				trigger[t] = &Trigger[t];
@@ -119,15 +118,6 @@ int MapTexture::getWidth() {
 
 int MapTexture::getHeight() {
 	return mHeight;
-}
-
-SDL_Rect* MapTexture::getp(int i) {
-	if (portal[i]) {
-		return portal[i];
-	}
-	else {
-		return portal[i]={ 0 };
-	}
 }
 
 SDL_Rect* MapTexture::getwall() {

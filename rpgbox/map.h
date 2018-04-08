@@ -8,7 +8,7 @@ class MapTexture {
 public:
 	//构造函数
 	MapTexture();
-	MapTexture(int(*m)[15], int(*w)[15], int (*t)[15], SDL_Rect* p[10], SDL_Rect* b[10]);
+	MapTexture(int(*m)[15], int(*w)[15], int (*t)[15], SDL_Rect* b[10]);
 	//析构函数
 	~MapTexture();
 	//从指定路径读取图片
@@ -21,7 +21,6 @@ public:
 	//得到图片的尺寸
 	int getWidth();
 	int getHeight();
-	SDL_Rect* getp(int i);
 	SDL_Rect* getb(int i);
 	SDL_Rect* getwall();
 	SDL_Rect* gett(int i);
@@ -40,7 +39,7 @@ private:
 	int mWidth;
 	int mHeight;
 	SDL_Rect* trigger[30];
-	SDL_Rect* portal[10];
+	SDL_Rect Trigger[30];
 	SDL_Rect* birth[10];
 	SDL_Rect wall[150];
 	int wallnum;
