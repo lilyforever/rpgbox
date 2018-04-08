@@ -8,7 +8,7 @@ class MapTexture {
 public:
 	//构造函数
 	MapTexture();
-	MapTexture(int(*m)[15], int(*w)[15], int (*t)[15], SDL_Rect* b[10]);
+	MapTexture(int(*m)[15], int(*w)[15], int (*t)[15]);
 	//析构函数
 	~MapTexture();
 	//从指定路径读取图片
@@ -41,6 +41,7 @@ private:
 	SDL_Rect* trigger[30];
 	SDL_Rect Trigger[30];
 	SDL_Rect* birth[10];
+	SDL_Rect Birth[10];
 	SDL_Rect wall[150];
 	int wallnum;
 	MapTexture* next[10];

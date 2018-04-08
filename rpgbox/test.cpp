@@ -51,14 +51,11 @@ int triggerdata1[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-
-SDL_Rect birth11 = { 192,192,32,32 };
-SDL_Rect* birth1[10] = { &birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11,&birth11, };
 
 int mapdata2[10][15] = {
 	0,0,1,2,2,2,2,2,2,2,2,1,0,0,0,
@@ -94,13 +91,10 @@ int triggerdata2[10][15] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-
-SDL_Rect birth21 = { 224,224,32,32 };
-SDL_Rect* birth2[10] = { &birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21,&birth21, };
 
 SDL_Window* window = NULL;
 
@@ -108,8 +102,8 @@ SDL_Renderer* renderer = NULL;
 
 MapTexture sceneTexture;
 
-MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1,birth1);
-MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2, birth2);
+MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1);
+MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2);
 void bound() {
 	outTexture.setnext(0,&inTexture);
 	inTexture.setnext(0,&outTexture);
@@ -200,10 +194,6 @@ void close()
 	SDL_Quit();
 }
 
-
-
-
-
 int main(int argc, char* argv[])
 {
 	bound();
@@ -228,6 +218,9 @@ int main(int argc, char* argv[])
 			SDL_Rect* trigger[30];
 			for (int i = 0; i < 30; i++) {
 				trigger[i] = sceneTexture.gett(i);
+				if (trigger[i]) {
+					cout << trigger[i]->x << endl;
+				}
 			}
 			SDL_Rect* wall = sceneTexture.getwall();
 			int jump = 100;
@@ -245,7 +238,7 @@ int main(int argc, char* argv[])
 
 				jump = cha.move(SCREEN_WIDTH, SCREEN_HEIGHT, &sceneTexture, jump);
 
-				if (jump != 100) {
+				if (jump < 10) {
 					cout << jump << endl;
 					wallnum = sceneTexture.initmap(*sceneTexture.getnext(jump));
 					cha.setmposx(sceneTexture.getb(jump)->x);
@@ -256,6 +249,14 @@ int main(int argc, char* argv[])
 					}
 					
 					wall = sceneTexture.getwall();
+					jump = 100;
+				}
+
+				if (jump >= 10 && jump < 20) {
+					jump = 100;
+				}
+
+				if (jump >= 20 && jump < 30) {
 					jump = 100;
 				}
 

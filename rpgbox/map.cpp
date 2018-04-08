@@ -12,7 +12,7 @@ MapTexture::MapTexture() {
 	wallnum = 0;
 }
 
-MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15], SDL_Rect* b[10]) {
+MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15]) {
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
@@ -20,10 +20,6 @@ MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15], SDL_Rect* b[10]) {
 	walldata = w;
 	triggerdata = t;
 	wallnum = 0;
-	for (int i = 0; i < 10; i++) {
-		birth[i] = b[i];
-		next[i] = NULL;
-	}
 }
 
 MapTexture::~MapTexture() {
@@ -79,8 +75,15 @@ int MapTexture::initmap(MapTexture m) {
 		for (int j = 0; j < 15; j++) {
 			if (triggerdata[i][j]) {
 				int t = triggerdata[i][j] - 1;
-				Trigger[t] = { j * 32,i * 32,32,32 };
-				trigger[t] = &Trigger[t];
+				if (t>=0 && t< 30) {
+					Trigger[t] = { j * 32,i * 32,32,32 };
+					trigger[t] = &Trigger[t];
+					cout << trigger[t]->x<< triggerdata[i][j] <<endl;
+				}
+				else {
+					Birth[t - 30] = { j * 32,i * 32,32,32 };
+					birth[t - 30] = &Birth[t - 30];
+				}
 			}
 		}
 	};
