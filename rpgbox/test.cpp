@@ -4,7 +4,6 @@
 #include "fight.h"
 #include "ui.h"
 #include "monster.h"
-#include <Windows.h>
 
 //包含了main函数
 
@@ -17,7 +16,7 @@ const int PIXEL_HEIGHT = 32;
 
 
 
-
+//[6][6]放着石头,[6][6]原本是11沙子
 int mapdata1[10][15] = {
 	18,18,18,17,18,18,18,18,18,18,18,55,55,55,18,
 	18,17,18,17,17,17,17,17,17,17,17,55,55,55,18,
@@ -25,7 +24,7 @@ int mapdata1[10][15] = {
 	18,17,17,17,18,18,18,18,18,17,17,55,55,17,18,
 	18,17,17,18,22,23,23,23,24,18,17,21,21,17,18,
 	18,17,17,18,25,28,26,79,27,18,55,55,55,17,18,
-	18,17,17,18,18,10,11,12,17,18,55,55,17,17,18,
+	18,17,17,18,18,10,72,12,17,18,55,55,17,17,18,
 	18,18,17,17,10,16,16,16,11,55,55,17,17,17,18,
 	18,18,17,17,77,16,16,16,16,21,21,17,17,17,18,
 	18,18,18,18,18,18,18,18,18,55,55,18,18,18,18
@@ -39,7 +38,7 @@ int walldata1[10][15] = {
 	1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1,
 	1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
 	1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1,
-	1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
+	1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1,
 	1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1,
 	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
@@ -148,8 +147,8 @@ SDL_Color bgwcolor = { 255,255,255 };
 MapTexture sceneTexture;
 Ui bgw = Ui(80, 200, 400, 120);
 Talk talk;
-string talktext = "ops,this is a bug!";
-string talktext2 = "it should be fixed!";
+string talktext = "ok, i will help you";
+string talktext2 = "the stone has been disappeared!";
 SDL_Color talkcolor = { 0,0,0, };
 Character cha;
 Fight fight;
@@ -234,8 +233,8 @@ bool loadScene()
 		success = false;
 	}
 
-	font = TTF_OpenFont("123.ttf",12);
-	font2 = TTF_OpenFont("lazy.ttf", 10);
+	font = TTF_OpenFont("123.ttf",30);
+	font2 = TTF_OpenFont("lazy.ttf", 20);
 	if (!font) {
 		cout << "加载字体文件失败" << endl;
 		success = false;
@@ -389,12 +388,27 @@ int main(int argc, char* argv[])
 							cha.handleEvent(e);
 							jump = talk.handleEvent(e, jump);
 						}
-
-						talk.free();
-						talk.loadbackFromFile(renderer, "back.png");
-						talk.loadtalkFromFont(font, renderer, talktext, talkcolor);
-						talk.render(renderer);
-						SDL_RenderPresent(renderer);
+						if (!talk.getstate()) {
+							if (jump == 100) {
+								talk.setstate();
+							}
+							talk.free();
+							talk.loadbackFromFile(renderer, "back.png");
+							talk.loadtalkFromFont(font, renderer, talktext, talkcolor);
+							talk.render(renderer);
+							SDL_RenderPresent(renderer);
+						}
+						if (talk.getstate()) {
+							outTexture.mapdata[6][6] = 11;
+							outTexture.walldata[6][6] = 0;
+							talk.free();
+							talk.loadbackFromFile(renderer, "back.png");
+							talk.loadtalkFromFont(font, renderer, talktext2, talkcolor);
+							talk.render(renderer);
+							SDL_RenderPresent(renderer);
+						}
+						
+						
 
 						//Sleep(100);
 						/*talk.loadbackFromFile(renderer, "back.png");

@@ -22,7 +22,7 @@ public:
 	static const int NAME_WIDTH = 80;
 	static const int NAME_HEIGHT = 32;
 	static const int TALK_WIDTH = 400;
-	static const int TALK_HEIGHT = 120;
+	static const int TALK_HEIGHT = 60;
 	
 	Talk();
 	~Talk();
@@ -31,6 +31,8 @@ public:
 	void free();
 	int handleEvent(SDL_Event& e, int j);
 	void render(SDL_Renderer* renderer);
+	void setstate();
+	bool getstate();
 private:
 	SDL_Texture* backtexture;
 	SDL_Texture* talktexture;
@@ -38,5 +40,6 @@ private:
 	std::string content;
 	int mWidth;
 	int mHeight;
+	bool havegot;
 };
 #endif

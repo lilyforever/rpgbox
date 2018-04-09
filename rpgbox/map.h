@@ -3,6 +3,8 @@
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>
+#include "talk.h"
+#include "monster.h"
 #include "loadimg.h"
 class MapTexture {
 public:
@@ -30,6 +32,8 @@ public:
 	int(*mapdata)[15];
 	int(*walldata)[15];
 	int(*triggerdata)[15];
+	Talk* talklist[10];
+	Monster* monsterlist[10];
 	MapTexture* getnext(int i);
 	void setnext(int i,MapTexture* m);
 private:

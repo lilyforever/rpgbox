@@ -1,7 +1,7 @@
 #include "talk.h"
 
 Talk::Talk() {
-
+	havegot = false;
 }
 
 Talk::~Talk() {
@@ -77,10 +77,17 @@ int Talk::handleEvent(SDL_Event& e, int jump) {
 void Talk::render(SDL_Renderer* renderer) {
 	SDL_Rect rendertalkbox = { TALK_X, TALK_Y,TALK_WIDTH,TALK_HEIGHT };
 	SDL_Rect talkbox = { 0,0,TALK_WIDTH,TALK_HEIGHT };
-	SDL_Rect renderfacebox = { FACE_X, FACE_Y,FACE_WIDTH,FACE_HEIGHT };
-	SDL_Rect facebox = { 0,0,FACE_WIDTH,FACE_HEIGHT };
+	SDL_Rect renderbackbox = { TALK_X, TALK_Y,TALK_WIDTH,TALK_HEIGHT * 2 };
+	SDL_Rect backbox = { 0,0,TALK_WIDTH,TALK_HEIGHT * 2 };
 
-
-	SDL_RenderCopy(renderer, backtexture, &talkbox, &rendertalkbox);
+	SDL_RenderCopy(renderer, backtexture, &backbox, &renderbackbox);
 	SDL_RenderCopy(renderer, talktexture, &talkbox, &rendertalkbox);
+}
+
+void Talk::setstate() {
+	havegot = true;
+}
+
+bool Talk::getstate() {
+	return havegot;
 }
