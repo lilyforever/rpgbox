@@ -10,7 +10,7 @@ class MapTexture {
 public:
 	//构造函数
 	MapTexture();
-	MapTexture(int(*m)[15], int(*w)[15], int (*t)[15]);
+	MapTexture(int(*m)[15], int(*w)[15], int (*t)[15],int i);
 	//析构函数
 	~MapTexture();
 	//从指定路径读取图片
@@ -32,10 +32,12 @@ public:
 	int(*mapdata)[15];
 	int(*walldata)[15];
 	int(*triggerdata)[15];
-	Talk* talklist[10];
-	Monster* monsterlist[10];
+	//string* str;
+	/*Talk* talklist[10];
+	Monster* monsterlist[10];*/
 	MapTexture* getnext(int i);
 	void setnext(int i,MapTexture* m);
+	int getnum();
 private:
 	//当前的texture
 	SDL_Texture* mTexture;
@@ -49,5 +51,6 @@ private:
 	SDL_Rect wall[150];
 	int wallnum;
 	MapTexture* next[10];
+	int mapnum;
 };
 #endif

@@ -45,8 +45,8 @@ bool Talk::loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk,
 		}
 		else {
 			//从surface中读取到宽和高
-			mWidth = loadedSurface->w;
-			mHeight = loadedSurface->h;
+			textWidth = loadedSurface->w;
+			textHeight = loadedSurface->h;
 		}
 		SDL_FreeSurface(loadedSurface);
 	}
@@ -56,8 +56,8 @@ bool Talk::loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk,
 
 void Talk::free() {
 	if (backtexture != NULL) {
-		SDL_DestroyTexture(backtexture);
-		backtexture = NULL;
+		/*SDL_DestroyTexture(backtexture);
+		backtexture = NULL;*/
 		SDL_DestroyTexture(talktexture);
 		talktexture = NULL;
 		mWidth = 0;
@@ -84,10 +84,13 @@ void Talk::render(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, talktexture, &talkbox, &rendertalkbox);
 }
 
-void Talk::setstate() {
-	havegot = true;
+void Talk::setstate(bool b) {
+	havegot = b;
 }
 
 bool Talk::getstate() {
 	return havegot;
 }
+SDL_Texture* Talk::backtexture = NULL;
+int Talk::mWidth = 0;
+int Talk::mHeight = 0;

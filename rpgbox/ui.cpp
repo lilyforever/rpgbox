@@ -68,10 +68,10 @@ bool Ui::loadtextFromFont(TTF_Font* font, SDL_Renderer* renderer, string Ui, SDL
 }
 
 void Ui::free() {
-	if (uipictexture != NULL) {
+	/*if (uipictexture != NULL) {
 		SDL_DestroyTexture(uipictexture);
 		uipictexture = NULL;
-	}
+	}*/
 	if (uitexttexture != NULL) {
 		SDL_DestroyTexture(uitexttexture);
 		uitexttexture = NULL;
@@ -111,21 +111,27 @@ bool Ui::handleEvent(SDL_Event& e) {
 	return success;
 }
 
-void Ui::renderpic(SDL_Renderer* renderer) {
+void Ui::renderbutton(SDL_Renderer* renderer) {
 	SDL_Rect renderUibox = {posx, posy, width, height };
 	SDL_Rect uiclips[4];
 	for (int i = 0; i < 3; i++) {
 		uiclips[i].x = 0;
-		uiclips[i].y = i * 32;
-		uiclips[i].w = 80;
-		uiclips[i].h = 32;
+		uiclips[i].y = i * height;
+		uiclips[i].w = width;
+		uiclips[i].h = height;
 	}
 	uiclips[3].x = 0;
-	uiclips[3].y = 32;
-	uiclips[3].w = 80;
-	uiclips[3].h = 32;
+	uiclips[3].y = height;
+	uiclips[3].w = width;
+	uiclips[3].h = height;
 
 	SDL_RenderCopy(renderer, uipictexture, &uiclips[state], &renderUibox);
+}
+
+void Ui::renderpic(SDL_Renderer* renderer) {
+	SDL_Rect renderUibox = { posx, posy, width, height };
+	SDL_Rect box = { 0,0,width,height };
+	SDL_RenderCopy(renderer, uipictexture, &box, &renderUibox);
 }
 
 void Ui::rendertext(SDL_Renderer* renderer) {
@@ -135,8 +141,12 @@ void Ui::rendertext(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, uitexttexture, &Uibox, &renderUibox);
 }
 
-int Ui::setAlpha(Uint8 alpha) {
+int Ui::setpicAlpha(Uint8 alpha) {
 	SDL_SetTextureAlphaMod(uipictexture, alpha);
+	return 0;
+}
+
+int Ui::settextAlpha(Uint8 alpha) {
 	SDL_SetTextureAlphaMod(uitexttexture, alpha);
 	return 0;
 }

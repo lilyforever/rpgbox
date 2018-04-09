@@ -25,10 +25,12 @@ public:
 	bool loadtextFromFont(TTF_Font* font, SDL_Renderer* renderer, string Ui, SDL_Color Uicolor);
 	void free();
 	bool handleEvent(SDL_Event& e);
+	void renderbutton(SDL_Renderer* renderer);
 	void renderpic(SDL_Renderer* renderer);
 	void rendertext(SDL_Renderer* renderer);
 	SDL_Rect* getcollision();
-	int setAlpha(Uint8 alpha);
+	int setpicAlpha(Uint8 alpha);
+	int settextAlpha(Uint8 alpha);
 	void setPos(int x, int y, int w, int h);
 private:
 	SDL_Texture * uipictexture;

@@ -77,7 +77,6 @@ void Character::handleEvent(SDL_Event& e) {
 int Character::move(int x,int y, MapTexture* m, int jump) {
 	m_posx += m_vx;
 	mCollision.x = m_posx;
-	bool flag = true;
 
 	/*if ((m_posx == m->gett()->x)&&m_posy == m->gett()->y) {
 		jump = true;
@@ -98,19 +97,15 @@ int Character::move(int x,int y, MapTexture* m, int jump) {
 	if ((m_posx < 0) || (m_posx + CHA_WIDTH > x)) {
 		m_posx -= m_vx;
 		mCollision.x = m_posx;
-		flag = false;
+		cout << "в╡г╫ак" << endl;
 	}
 
-	if (flag) {
-		for (int i = 0; i < m->getwallnum(); i++) {
-			if (checkCollision(mCollision, m->getwall()[i])) {
-				m_posx -= m_vx;
-				mCollision.x = m_posx;
-			}
+	for (int i = 0; i < m->getwallnum(); i++) {
+		if (checkCollision(mCollision, m->getwall()[i])) {
+			m_posx -= m_vx;
+			mCollision.x = m_posx;
 		}
-		flag = true;
 	}
-
 	m_posy += m_vy;
 	mCollision.y = m_posy;
 
@@ -134,17 +129,14 @@ int Character::move(int x,int y, MapTexture* m, int jump) {
 	if ((m_posy < 0) || (m_posy + CHA_HEIGHT > y)) {
 		m_posy -= m_vy;
 		mCollision.y = m_posy;
-		flag = false;
+		cout << "в╡г╫ак" << endl;
 	}
 
-	if (flag) {
-		for (int i = 0; i < m->getwallnum(); i++) {
-			if (checkCollision(mCollision, m->getwall()[i])) {
-				m_posy -= m_vy;
-				mCollision.y = m_posy;
-			}
+	for (int i = 0; i < m->getwallnum(); i++) {
+		if (checkCollision(mCollision, m->getwall()[i])) {
+			m_posy -= m_vy;
+			mCollision.y = m_posy;
 		}
-		flag = true;
 	}
 	return jump;
 

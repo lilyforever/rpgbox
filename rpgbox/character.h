@@ -8,8 +8,9 @@
 #include "loadimg.h"
 class Character {
 public:
-	static const int CHA_WIDTH = 32;
-	static const int CHA_HEIGHT = 32;
+	//主角大小小于地图的一格，才能在边缘处消除因为误差而过不去一格宽的路的现象
+	static const int CHA_WIDTH = 31;
+	static const int CHA_HEIGHT = 31;
 	//static const int CHA_V = 1;
 
 	Character();

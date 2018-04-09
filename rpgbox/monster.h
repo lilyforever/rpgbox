@@ -11,7 +11,7 @@ public:
 	static const int MON_WIDTH = 64;
 	static const int MON_HEIGHT = 64;
 	Monster();
-	Monster(int hp, int atk);
+	Monster(int hp, int atk, string n);
 	~Monster();
 	void free();
 	bool loadFromFile(SDL_Renderer* renderer, string path);
@@ -20,6 +20,7 @@ public:
 	void sethp(int i);
 	int getatk();
 	void setatk(int i);
+	string* getname();
 private:
 	SDL_Texture * mTexture;
 	int m_posx;
@@ -28,6 +29,7 @@ private:
 	int mHeight;
 	int hp;
 	int atk;
+	string name;
 };
 
 #endif

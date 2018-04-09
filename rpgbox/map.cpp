@@ -12,13 +12,14 @@ MapTexture::MapTexture() {
 	wallnum = 0;
 }
 
-MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15]) {
+MapTexture::MapTexture(int(*m)[15], int(*w)[15], int(*t)[15],  int i) {
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
 	mapdata = m;
 	walldata = w;
 	triggerdata = t;
+	mapnum = i;
 	wallnum = 0;
 }
 
@@ -54,6 +55,7 @@ int MapTexture::initmap(MapTexture m) {
 	mapdata = m.mapdata;
 	walldata = m.walldata;
 	triggerdata = m.triggerdata;
+	mapnum = m.getnum();
 	for (int i = 0; i < 10; i++) {
 		birth[i] = m.birth[i];
 		next[i] = m.next[i];
@@ -157,4 +159,8 @@ SDL_Rect* MapTexture::getb(int i) {
 
 SDL_Rect* MapTexture::gett(int i) {
 	return trigger[i];
+}
+
+int MapTexture::getnum() {
+	return mapnum;
 }

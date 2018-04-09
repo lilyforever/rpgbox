@@ -5,9 +5,10 @@ Monster::Monster() {
 	m_posy = 164;
 }
 
-Monster::Monster(int h, int a) {
+Monster::Monster(int h, int a, string n) {
 	hp = h;
 	atk = a;
+	name = n;
 	m_posx = 416;
 	m_posy = 180;
 }
@@ -71,4 +72,8 @@ void Monster::sethp(int i) {
 
 void Monster::setatk(int i) {
 	atk = i;
+}
+
+string* Monster::getname() {
+	return &name;
 }

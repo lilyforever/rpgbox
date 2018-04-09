@@ -26,20 +26,22 @@ public:
 	
 	Talk();
 	~Talk();
-	bool loadbackFromFile(SDL_Renderer* renderer, std::string path);
+	static bool loadbackFromFile(SDL_Renderer* renderer, std::string path);
 	bool loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk, SDL_Color talkcolor);
 	void free();
 	int handleEvent(SDL_Event& e, int j);
 	void render(SDL_Renderer* renderer);
-	void setstate();
+	void setstate(bool b);
 	bool getstate();
 private:
-	SDL_Texture* backtexture;
+	static SDL_Texture* backtexture;
 	SDL_Texture* talktexture;
 	std::string name;
 	std::string content;
-	int mWidth;
-	int mHeight;
+	static int mWidth;
+	static int mHeight;
+	int textWidth;
+	int textHeight;
 	bool havegot;
 };
 #endif
