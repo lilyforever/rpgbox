@@ -28,6 +28,10 @@ public:
 	double getmposy();
 	void setmposx(int x);
 	void setmposy(int y);
+	int gethp();
+	void sethp(int i);
+	int getatk();
+	void setatk(int i);
 private:
 	char* m_name;
 	bool m_sex;
@@ -38,6 +42,7 @@ private:
 	double m_posx, m_posy;
 	double m_vx, m_vy;
 	SDL_Rect mCollision;
-
+	int hp;
+	int atk;
 };
 #endif

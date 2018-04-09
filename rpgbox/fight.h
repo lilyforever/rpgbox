@@ -3,6 +3,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "character.h"
+#include "monster.h"
 #include <string>
 #include <iostream>
 
@@ -15,6 +17,9 @@ public:
 	Fight();
 	~Fight();
 	bool loadFromFile(SDL_Renderer* renderer, std::string path);
+	void free();
+	void handleEvent(SDL_Event& e);
+	bool fightprocess(Character* cha, Monster* mon, bool handle, bool over);
 	void render(SDL_Renderer* renderer);
 private:
 	int mWidth;

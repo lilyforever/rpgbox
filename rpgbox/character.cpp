@@ -13,6 +13,8 @@ Character::Character() {
 	m_vy = 0;
 	mCollision.w = CHA_WIDTH;
 	mCollision.h = CHA_HEIGHT;
+	hp = 100;
+	atk = 2;
 }
 
 Character::~Character() {
@@ -87,6 +89,7 @@ int Character::move(int x,int y, MapTexture* m, int jump) {
 				jump = i;
 				m_posx -= m_vx;
 				mCollision.x = m_posx;
+				cout << "»ØÍË" << endl;
 				return jump;
 			}
 		}
@@ -122,6 +125,7 @@ int Character::move(int x,int y, MapTexture* m, int jump) {
 				jump = i;
 				m_posy -= m_vy;
 				mCollision.y = m_posy;
+				cout << "»ØÍË" << endl;
 				return jump;
 			}
 		}
@@ -187,4 +191,20 @@ void Character::setmposx(int x) {
 
 void Character::setmposy(int y) {
 	m_posy = y;
+}
+
+int Character::gethp() {
+	return hp;
+}
+
+void Character::sethp(int i) {
+	hp = i;
+}
+
+int Character::getatk() {
+	return atk;
+}
+
+void Character::setatk(int i) {
+	atk = i;
 }

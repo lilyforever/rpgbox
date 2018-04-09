@@ -79,9 +79,10 @@ int MapTexture::initmap(MapTexture m) {
 			if (triggerdata[i][j]) {
 				int t = triggerdata[i][j] - 1;
 				if (t>=0 && t< 30) {
-					Trigger[t] = { j * 32+14,i * 32+14,4,4 };
+					//这里可以改触发点的大小
+					Trigger[t] = { j * 32+8,i * 32+8,16,16 };
 					trigger[t] = &Trigger[t];
-					cout << trigger[t]->x<<" " << "lalala" << triggerdata[i][j] <<endl;
+					cout << "triggernum" << triggerdata[i][j] << " x: " << trigger[t]->x << " y: " << trigger[t]->y <<endl;
 				}
 				else {
 					Birth[t - 30] = { j * 32,i * 32,32,32 };

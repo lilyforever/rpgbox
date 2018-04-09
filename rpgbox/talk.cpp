@@ -5,7 +5,7 @@ Talk::Talk() {
 }
 
 Talk::~Talk() {
-
+	free();
 }
 
 bool Talk::loadbackFromFile(SDL_Renderer* renderer, std::string path) {
@@ -54,10 +54,24 @@ bool Talk::loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk,
 	return talktexture != NULL;
 }
 
-void Talk::handleEvent(SDL_Event& e) {
-	if (e.type == SDL_MOUSEBUTTONDOWN) {
-
+void Talk::free() {
+	if (backtexture != NULL) {
+		SDL_DestroyTexture(backtexture);
+		backtexture = NULL;
+		SDL_DestroyTexture(talktexture);
+		talktexture = NULL;
+		mWidth = 0;
+		mHeight = 0;
 	}
+}
+
+int Talk::handleEvent(SDL_Event& e, int jump) {
+	if (e.type == SDL_MOUSEBUTTONDOWN) {
+		cout << "jump" << endl;
+		jump = 100;
+	}
+
+	return jump;
 }
 
 void Talk::render(SDL_Renderer* renderer) {
@@ -69,14 +83,4 @@ void Talk::render(SDL_Renderer* renderer) {
 
 	SDL_RenderCopy(renderer, backtexture, &talkbox, &rendertalkbox);
 	SDL_RenderCopy(renderer, talktexture, &talkbox, &rendertalkbox);
-}
-
-int Talk::setAlpha(Uint8 alpha)
-{
-	SDL_SetTextureAlphaMod(talktexture, alpha);
-	return 0;
-}
-
-void Talk::show() {
-	
 }

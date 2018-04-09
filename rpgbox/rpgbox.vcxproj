@@ -121,7 +121,9 @@
     <ClInclude Include="fight.h" />
     <ClInclude Include="loadimg.h" />
     <ClInclude Include="map.h" />
+    <ClInclude Include="monster.h" />
     <ClInclude Include="talk.h" />
+    <ClInclude Include="ui.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="character.cpp" />
@@ -129,8 +131,10 @@
     <ClCompile Include="fight.cpp" />
     <ClCompile Include="loadimg.cpp" />
     <ClCompile Include="map.cpp" />
+    <ClCompile Include="monster.cpp" />
     <ClCompile Include="talk.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\sdllib\SDL2.lib" />

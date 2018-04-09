@@ -28,10 +28,9 @@ public:
 	~Talk();
 	bool loadbackFromFile(SDL_Renderer* renderer, std::string path);
 	bool loadtalkFromFont(TTF_Font* font, SDL_Renderer* renderer, string talk, SDL_Color talkcolor);
-	void handleEvent(SDL_Event& e);
+	void free();
+	int handleEvent(SDL_Event& e, int j);
 	void render(SDL_Renderer* renderer);
-	int Talk::setAlpha(Uint8 alpha);
-	void show();
 private:
 	SDL_Texture* backtexture;
 	SDL_Texture* talktexture;
