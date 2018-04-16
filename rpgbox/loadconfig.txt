@@ -1,0 +1,7 @@
+test2.jpg
+cha.png
+back.png
+fightbutton.png
+mainuihp.png
+123.ttf
+lazy.ttf

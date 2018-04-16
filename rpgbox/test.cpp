@@ -5,6 +5,7 @@
 #include "ui.h"
 #include "monster.h"
 #include <fstream>
+#include <Windows.h>
 
 //°üº¬ÁËmainº¯Êý
 
@@ -144,39 +145,44 @@ SDL_Color bgwcolor = { 255,255,255 };
 MapTexture sceneTexture;
 Ui bgw = Ui(80, 200, 400, 120);
 Talk talk[100];
-Monster monster[100];
 
 //´´½¨¹ÖÎï
-Monster slime(20, 1, "slime");
-Monster littlemonkey(30, -1, "littlemonkey");
+//Monster slime(20, 1, "slime");
+//Monster littlemonkey(30, -1, "littlemonkey");
 
+Monster monstertype[20];
+Monster monster;
+int monsterpos[10][10] = { 0 };
+int monsterhp[10][10] = { 0 };
+
+string loadconfig[7];
 
 SDL_Color talkcolor = { 0,0,0, };
 SDL_Color maincolor = { 255,255,0, };
 Character cha;
+int chadata[4];
 Fight fight;
 SDL_Rect sceneClips[100];
 
-Ui charahp = Ui(32, 128, 64, 32);
-Ui mainhp = Ui(0, 0, 64, 32);
+Ui charahpui = Ui(32, 128, 64, 32);
+Ui mainhpui = Ui(0, 0, 64, 32);
 string chahpstr;
-Ui monsterhp = Ui(384, 128, 64, 32);
+Ui monsterhpui = Ui(384, 128, 64, 32);
 string monhpstr;
-Ui monstername = Ui(384, 96, 64, 32);
-Ui attack = Ui(160, 180, 160, 64);
+Ui monsternameui = Ui(384, 96, 64, 32);
+Ui attackui = Ui(160, 180, 160, 64);
 
 //string map3str[20] = { "hello, adventure!","ok, i will help you~","", "", "", "", "", "", "", "",
 //									"can you disappear the stone?", "the stone has been disappeared!", "", "", "", "", "", "", "", "", };
-
-string mapstr[60] = {
-"you are too weak!","","", "", "", "", "", "", "", "",
-"be stronger plzzz", "", "", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "", "", "",
-"hello, adventure!", "ok, i will help you~", "", "", "", "", "", "", "", "",
-"can you disappear the stone?", "the stone has been disappeared!", "", "", "", "", "", "", "", "", };
-string congratulation = "fine, congratulations~!";
-string secretachievement = "o, niupi.";
+//string mapstr[60] = {
+//"you are too weak!","","", "", "", "", "", "", "", "",
+//"be stronger plzzz", "", "", "", "", "", "", "", "", "",
+//"", "", "", "", "", "", "", "", "", "",
+//"", "", "", "", "", "", "", "", "", "",
+//"hello, adventure!", "ok, i will help you~", "", "", "", "", "", "", "", "",
+//"can you disappear the stone?", "the stone has been disappeared!", "", "", "", "", "", "", "", "", };
+//string congratulation = "fine, congratulations~!";
+//string secretachievement = "o, niupi.";
 
 MapTexture maps[10];
 
@@ -187,32 +193,101 @@ struct Mapdata {
 	int next[10];
 };
 
+//struct Talkdata {
+//	int state[3] = { 0 };
+//	const char* content = "null";
+//};
+
 Mapdata mapdata[10];
-int maptotal[1];
+string talklist[10][10][2];
+int talkstate[10][10] = { 0 };
+int maptotal[1] = { 0 };
+int currentmap[1] = { 0 };
 
 
 void initmaps() {
-	ifstream f1("testconfig.dat", ios::binary);
-	ifstream f2("testnext.dat", ios::binary);
-	f1.read((char*)maptotal, sizeof(int));
+	ifstream f("testconfig.dat", ios::binary);
+	f.read((char*)maptotal, sizeof(int));
 	for (int i = 0; i < maptotal[0]; i++) {
-		f1.read((char*)mapdata[i].mapdata, 150 * sizeof(int));
-		f1.read((char*)mapdata[i].walldata, 150 * sizeof(int));
-		f1.read((char*)mapdata[i].triggerdata, 150 * sizeof(int));
-		f2.read((char*)mapdata[i].next, 10 * sizeof(int));
+		f.read((char*)mapdata[i].mapdata, 150 * sizeof(int));
+		f.read((char*)mapdata[i].walldata, 150 * sizeof(int));
+		f.read((char*)mapdata[i].triggerdata, 150 * sizeof(int));
+		f.read((char*)mapdata[i].next, 10 * sizeof(int));
 		maps[i] = MapTexture(mapdata[i].mapdata, mapdata[i].walldata, mapdata[i].triggerdata, i);
 		for (int j = 0; j < 10; j++) {
 			maps[i].setnext(j, &maps[mapdata[i].next[j]]);
 		}
 	}
-	f1.close();
+	f.read((char*)monsterpos, 100 * sizeof(int));
+	f.close();
+}
+
+void inittalk() {
+	ifstream f("talklist.txt");
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			for (int k = 0; k < 2; k++) {
+				getline(f, talklist[i][j][k]);
+			}
+		}
+	}
+	f.close();
+}
+
+void loaddata() {
+	SDL_RWops* file = SDL_RWFromFile("testsave.bin", "r+b");
+	if (file != NULL) {
+		SDL_RWread(file, &maptotal[0], sizeof(int), 1);
+		SDL_RWread(file, &currentmap[0], sizeof(int), 1);
+		for (int i = 0; i < maptotal[0]; i++) {
+			SDL_RWread(file, &mapdata[i].mapdata, 150 * sizeof(int), 1);
+			SDL_RWread(file, &mapdata[i].walldata, 150 * sizeof(int), 1);
+			SDL_RWread(file, &mapdata[i].triggerdata, 150 * sizeof(int), 1);
+			SDL_RWread(file, &mapdata[i].next, 10 * sizeof(int), 1);
+			maps[i] = MapTexture(mapdata[i].mapdata, mapdata[i].walldata, mapdata[i].triggerdata, i);
+			for (int j = 0; j < 10; j++) {
+				maps[i].setnext(j, &maps[mapdata[i].next[j]]);
+			}
+		}
+		SDL_RWread(file, &chadata, 4 * sizeof(int), 1);
+		cha.setatk(chadata[0]);
+		cha.sethp(chadata[1]);
+		cha.setmposx(chadata[2]);
+		cha.setmposy(chadata[3]);
+		SDL_RWread(file, &talkstate, 100 * sizeof(int), 1);
+		SDL_RWread(file, &monsterhp, 100 * sizeof(int), 1);
+		SDL_RWclose(file);
+	}
+}
+
+void savedata() {
+	SDL_RWops* file = SDL_RWFromFile("testsave.bin", "w+b");
+	if (file != NULL) {
+		SDL_RWwrite(file, &maptotal[0], sizeof(int), 1);
+		currentmap[0] = sceneTexture.getnum();
+		SDL_RWwrite(file, &currentmap[0], sizeof(int), 1);
+		for (int i = 0; i < maptotal[0]; i++) {
+			SDL_RWwrite(file, &mapdata[i].mapdata, 150 * sizeof(int), 1);
+			SDL_RWwrite(file, &mapdata[i].walldata, 150 * sizeof(int), 1);
+			SDL_RWwrite(file, &mapdata[i].triggerdata, 150 * sizeof(int), 1);
+			SDL_RWwrite(file, &mapdata[i].next, 10 * sizeof(int), 1);
+
+		}
+		chadata[0] = cha.getatk();
+		chadata[1] = cha.gethp();
+		chadata[2] = cha.getmposx();
+		chadata[3] = cha.getmposy();
+		SDL_RWwrite(file, &chadata, 4 * sizeof(int), 1);
+		SDL_RWwrite(file, &talkstate, 100 * sizeof(int), 1);
+		SDL_RWwrite(file, &monsterhp, 100 * sizeof(int), 1);
+		SDL_RWclose(file);
+	}
 }
 
 
 //MapTexture outTexture = MapTexture(mapdata1,walldata1,triggerdata1,0);
 //MapTexture inTexture = MapTexture(mapdata2, walldata2, triggerdata2,1);
 //MapTexture outTexture2 = MapTexture(mapdata3, walldata3, triggerdata3,2);
-
 //void bound() {
 //	//outTexture.setnext(0,&inTexture);
 //	//outTexture.setnext(1, &outTexture2);
@@ -220,7 +295,6 @@ void initmaps() {
 //	//outTexture2.setnext(1, &outTexture);
 //	//mapdata[0] = mapdata1;
 //}
-
 //SDL_Rect wall[150];
 //int (*mapdata)[15] = NULL;
 //int (*walldata)[15] = NULL;
@@ -268,20 +342,42 @@ bool loadScene()
 	const int height = 32;
 
 	bool success = true;
-	if (!sceneTexture.loadFromFile(renderer, "test2.jpg"))
+
+	ifstream f("loadconfig.txt");
+	for (int i = 0; i < 7; i++) {
+		getline(f, loadconfig[i]);
+	}
+	f.close();
+
+	if (!sceneTexture.loadFromFile(renderer, loadconfig[0].c_str()))
 	{
 		std::cout << "¼ÓÔØ³¡¾°Í¼Æ¬Ê§°Ü" << std::endl;
 		success = false;
 	}
 
-	if (!cha.loadFromFile(renderer, "cha.png"))
+	if (!cha.loadFromFile(renderer, loadconfig[1].c_str()))
 	{
 		std::cout << "¼ÓÔØÈËÎïÍ¼Æ¬Ê§°Ü" << std::endl;
 		success = false;
 	}
 
-	font = TTF_OpenFont("123.ttf",30);
-	font2 = TTF_OpenFont("lazy.ttf", 20);
+	if (!Talk::loadbackFromFile(renderer, loadconfig[2].c_str())) {
+		cout << "¼ÓÔØ¶Ô»°±³¾°Í¼Æ¬Ê§°Ü" << endl;
+		success = false;
+	}
+
+	if (!attackui.loadpicFromFile(renderer, loadconfig[3].c_str())) {
+		cout << "¼ÓÔØ°´Å¥Í¼Æ¬Ê§°Ü" << endl;
+		success = false;
+	}
+	
+	if (!mainhpui.loadpicFromFile(renderer, loadconfig[4].c_str())) {
+		cout << "¼ÓÔØÖ÷Ò³ÑªÌõÍ¼Æ¬Ê§°Ü" << endl;
+		success = false;
+	}
+
+	font = TTF_OpenFont(loadconfig[5].c_str(), 30);
+	font2 = TTF_OpenFont(loadconfig[6].c_str(), 20);
 	if (!font) {
 		cout << "¼ÓÔØ×ÖÌåÎÄ¼þÊ§°Ü" << endl;
 		success = false;
@@ -289,21 +385,6 @@ bool loadScene()
 
 	if (!bgw.loadtextFromFont(font, renderer, bgwtext, bgwcolor)) {
 		cout << "¼ÓÔØ±³¾°ÎÄ±¾Ê§°Ü" << endl;
-		success = false;
-	}
-
-	if (!Talk::loadbackFromFile(renderer, "back.png")) {
-		cout << "¼ÓÔØ¶Ô»°±³¾°Í¼Æ¬Ê§°Ü" << endl;
-		success = false;
-	}
-
-	if (!attack.loadpicFromFile(renderer, "fightbutton.png")) {
-		cout << "¼ÓÔØ°´Å¥Í¼Æ¬Ê§°Ü" << endl;
-		success = false;
-	}
-	
-	if (!mainhp.loadpicFromFile(renderer, "mainuihp.png")) {
-		cout << "¼ÓÔØÖ÷Ò³ÑªÌõÍ¼Æ¬Ê§°Ü" << endl;
 		success = false;
 	}
 
@@ -324,17 +405,51 @@ bool loadScene()
 }
 
 bool loadmonster() {
+	string ms[20][5];
+	string montotalstr;
+	int montotal;
+	ifstream f("monstertype.txt");
+	getline(f, montotalstr);
+	montotal = atoi(montotalstr.c_str());
+	for (int i = 0; i < montotal; i++) {
+		for (int j = 0; j < 5; j++) {
+			getline(f, ms[i][j]);
+			if (j == 0) {
+				monstertype[i].setnum(atoi(ms[i][j].c_str()));
+			}
+			if (j == 1) {
+				monstertype[i].setatk(atoi(ms[i][j].c_str()));
+			}
+			if (j == 3) {
+				monstertype[i].setname(&ms[i][j]);
+			}
+			if (j == 4) {
+				monstertype[i].sethp(atoi(ms[i][j].c_str()));
+			}
+		}
+	}
 	bool success = true;
-	if (!slime.loadFromFile(renderer, "slime.png")) {
-		cout << "Ê·À³Ä·Í¼Æ¬ÔØÈëÊ§°Ü" << endl;
-		success = false;
+	for (int i = 0; i < montotal; i++) {
+		if (!monstertype[i].loadFromFile(renderer, ms[i][2].c_str())) {
+			cout << "¹ÖÎïÍ¼Æ¬ÔØÈëÊ§°Ü" << endl;
+			success = false;
+		}
 	}
-	if (!littlemonkey.loadFromFile(renderer, "littlemonkey.png")) {
-		cout << "³É¸çÍ¼Æ¬ÔØÈëÊ§°Ü" << endl;
-		success = false;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			monsterhp[i][j] = monstertype[monsterpos[i][j]].gethp();
+		}
 	}
-	monster[10] = slime;
-	monster[11] = littlemonkey;
+	//if (!slime.loadFromFile(renderer, "slime.png")) {
+	//	cout << "Ê·À³Ä·Í¼Æ¬ÔØÈëÊ§°Ü" << endl;
+	//	success = false;
+	//}
+	//if (!littlemonkey.loadFromFile(renderer, "littlemonkey.png")) {
+	//	cout << "³É¸çÍ¼Æ¬ÔØÈëÊ§°Ü" << endl;
+	//	success = false;
+	//}
+	//monster[10] = slime;
+	//monster[11] = littlemonkey;
 	return success;
 }
 
@@ -348,17 +463,18 @@ void renderscreen() {
 	}
 	cha.render(renderer);
 	chahpstr = to_string(cha.gethp());
-	mainhp.free();
-	mainhp.loadtextFromFont(font2, renderer, chahpstr, maincolor);
-	mainhp.setpicAlpha(125);
-	mainhp.renderpic(renderer);
-	mainhp.rendertext(renderer);
+	mainhpui.free();
+	mainhpui.loadtextFromFont(font2, renderer, chahpstr, maincolor);
+	mainhpui.setpicAlpha(125);
+	mainhpui.renderpic(renderer);
+	mainhpui.rendertext(renderer);
 	bgw.rendertext(renderer);
 	SDL_RenderPresent(renderer);
 }
 
 void close()
 {
+	savedata();
 	sceneTexture.free();
 	cha.free();
 	fight.free();
@@ -377,6 +493,7 @@ int main(int argc, char* argv[])
 {
 	//bound();
 	initmaps();
+	inittalk();
 	
 	if (!init())
 	{
@@ -396,9 +513,10 @@ int main(int argc, char* argv[])
 			else {
 				bool quit = false;
 
+				loaddata();
 				SDL_Event e;
 
-				int wallnum = sceneTexture.initmap(maps[0]);
+				int wallnum = sceneTexture.initmap(maps[currentmap[0]]);
 				SDL_Rect* trigger[30];
 				for (int i = 0; i < 30; i++) {
 					trigger[i] = sceneTexture.gett(i);
@@ -443,8 +561,9 @@ int main(int argc, char* argv[])
 					}
 
 					else if (jump >= 10 && jump < 20) {
-						int talknum = sceneTexture.getnum() * 10 + jump - 10;
-						int talkpos = sceneTexture.getnum() * 20 + jump - 10;
+						int currentm = sceneTexture.getnum();
+						int currentt = jump - 10;
+						int talknum = currentm * 10 + currentt;
 						while (SDL_PollEvent(&e) != 0)
 						{
 							if (e.type == SDL_QUIT)
@@ -454,27 +573,28 @@ int main(int argc, char* argv[])
 							cha.handleEvent(e);
 							jump = talk[talknum].handleEvent(e, jump);
 						}
-						if (!talk[talknum].getstate() && cha.gethp() < 115) {
+						/*if (!talk[talknum].getstate() && cha.gethp() < 115) {*/
+						if (talkstate[currentm][currentt] == 0) {
 							if (jump == 100) {
-								talk[talknum].setstate(true);
+								talkstate[currentm][currentt] = 1;
 							}
 							talk[talknum].free();
-							talk[talknum].loadtalkFromFont(font, renderer, mapstr[talkpos], talkcolor);
+							talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][0], talkcolor);
 							
 							talk[talknum].render(renderer);
 							SDL_RenderPresent(renderer);
 						}
-						if(talk[talknum].getstate() && cha.gethp() < 115) {
+						if(talkstate[currentm][currentt] == 1) {
 							if (talknum == 21) {
 								maps[0].mapdata[6][6] = 11;
 								maps[0].walldata[6][6] = 0;
 							}
 							talk[talknum].free();
-							talk[talknum].loadtalkFromFont(font, renderer, mapstr[talkpos+10], talkcolor);
+							talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][1], talkcolor);
 							talk[talknum].render(renderer);
 							SDL_RenderPresent(renderer);
 						}
-						if (talk[talknum].getstate() && cha.gethp() >= 115) {
+						/*if (talk[talknum].getstate() && cha.gethp() >= 115) {
 							talk[talknum].free();
 							talk[talknum].loadtalkFromFont(font, renderer, congratulation, talkcolor);
 							talk[talknum].render(renderer);
@@ -485,14 +605,16 @@ int main(int argc, char* argv[])
 							talk[talknum].loadtalkFromFont(font, renderer, secretachievement, talkcolor);
 							talk[talknum].render(renderer);
 							SDL_RenderPresent(renderer);
-						}
+						}*/
 					}
 
 					else if (jump >= 20 && jump < 30) {
-						int monsternum = sceneTexture.getnum() * 10 + jump - 20;
-						if (monster[monsternum].gethp() > 0) {
+						int montype = monsterpos[sceneTexture.getnum()][ jump - 20];
+						if (monsterhp[sceneTexture.getnum()][jump - 20] > 0) {
 							bool over = false;
-							cout << monsternum << endl;
+							monster.sethp(monsterhp[sceneTexture.getnum()][jump - 20]);
+							monster.setatk(monstertype[montype].getatk());
+							cout << montype << endl;
 							SDL_RenderClear(renderer);
 							while (!over) {
 								bool atk = false;
@@ -503,31 +625,32 @@ int main(int argc, char* argv[])
 										quit = true;
 									}
 									cha.handleEvent(e);
-									atk = attack.handleEvent(e);
+									atk = attackui.handleEvent(e);
 								}
-								charahp.free();
-								monsterhp.free();
-								monstername.free();
+								charahpui.free();
+								monsterhpui.free();
+								monsternameui.free();
 								fight.free();
 								fight.loadFromFile(renderer, "fight.png");
 								fight.render(renderer);
-								attack.renderbutton(renderer);
+								attackui.renderbutton(renderer);
 								int x = cha.getmposx();
 								int y = cha.getmposy();
 								cha.setmposx(64);
 								cha.setmposy(180);
 								cha.render(renderer);
-								monster[monsternum].render(renderer);
+								monstertype[montype].render(renderer);
 								chahpstr = to_string(cha.gethp());
-								monhpstr = to_string(monster[monsternum].gethp());
-								charahp.loadtextFromFont(font2, renderer, chahpstr, talkcolor);
-								monsterhp.loadtextFromFont(font2, renderer, monhpstr, talkcolor);
-								monstername.loadtextFromFont(font, renderer, *monster[monsternum].getname(), talkcolor);
-								charahp.rendertext(renderer);
-								monsterhp.rendertext(renderer);
-								monstername.rendertext(renderer);
+								monhpstr = to_string(monster.gethp());
+								charahpui.loadtextFromFont(font2, renderer, chahpstr, talkcolor);
+								monsterhpui.loadtextFromFont(font2, renderer, monhpstr, talkcolor);
+								monsternameui.loadtextFromFont(font, renderer, *monstertype[montype].getname(), talkcolor);
+								charahpui.rendertext(renderer);
+								monsterhpui.rendertext(renderer);
+								monsternameui.rendertext(renderer);
 								SDL_RenderPresent(renderer);
-								over = fight.fightprocess(&cha, &monster[monsternum], atk, over);
+								over = fight.fightprocess(&cha, &monster, atk, over);
+								monsterhp[sceneTexture.getnum()][jump - 20] = monster.gethp();
 								cha.setmposx(x);
 								cha.setmposy(y);
 							}

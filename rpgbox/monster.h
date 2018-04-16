@@ -18,9 +18,12 @@ public:
 	void render(SDL_Renderer* renderer);
 	int gethp();
 	void sethp(int i);
+	int getnum();
+	void setnum(int i);
 	int getatk();
 	void setatk(int i);
 	string* getname();
+	void setname(string* n);
 private:
 	SDL_Texture * mTexture;
 	int m_posx;
@@ -29,6 +32,7 @@ private:
 	int mHeight;
 	int hp;
 	int atk;
+	int monnum;
 	string name;
 };
 

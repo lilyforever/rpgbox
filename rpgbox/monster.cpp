@@ -77,3 +77,15 @@ void Monster::setatk(int i) {
 string* Monster::getname() {
 	return &name;
 }
+
+void Monster::setname(string* n) {
+	name = *n;
+}
+
+int Monster::getnum() {
+	return monnum;
+}
+
+void Monster::setnum(int i) {
+	monnum = i;
+}
