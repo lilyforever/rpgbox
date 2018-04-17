@@ -2,6 +2,9 @@ test2.jpg
 cha.png
 back.png
 fightbutton.png
+newgamebutton.png
+continuegamebutton.png
 mainuihp.png
+main.png
 123.ttf
 lazy.ttf

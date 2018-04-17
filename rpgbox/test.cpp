@@ -146,6 +146,10 @@ MapTexture sceneTexture;
 Ui bgw = Ui(80, 200, 400, 120);
 Talk talk[100];
 
+string titletext = "RPGBOX DEMO";
+Ui title = Ui(40, 10, 400, 120);
+Ui titlepic = Ui(0, 0, 480, 320);
+
 //创建怪物
 //Monster slime(20, 1, "slime");
 //Monster littlemonkey(30, -1, "littlemonkey");
@@ -155,7 +159,7 @@ Monster monster;
 int monsterpos[10][10] = { 0 };
 int monsterhp[10][10] = { 0 };
 
-string loadconfig[7];
+string loadconfig[10];
 
 SDL_Color talkcolor = { 0,0,0, };
 SDL_Color maincolor = { 255,255,0, };
@@ -166,6 +170,10 @@ SDL_Rect sceneClips[100];
 
 Ui charahpui = Ui(32, 128, 64, 32);
 Ui mainhpui = Ui(0, 0, 64, 32);
+//主菜单UI
+Ui continuegame = Ui(160, 160, 160, 64);
+Ui newgame = Ui(160, 240, 160, 64);
+
 string chahpstr;
 Ui monsterhpui = Ui(384, 128, 64, 32);
 string monhpstr;
@@ -204,6 +212,28 @@ int talkstate[10][10] = { 0 };
 int maptotal[1] = { 0 };
 int currentmap[1] = { 0 };
 
+bool mainmenu(bool &q, SDL_Event &ev) {
+	bool startnew = false;
+	bool startload = false;
+	while (!startnew && !startload) {
+		while (SDL_PollEvent(&ev) != 0)
+		{
+			startnew = newgame.handleEvent(ev);
+			startload = continuegame.handleEvent(ev);
+			if (ev.type == SDL_QUIT)
+			{
+				q = true;
+				startload = true;
+			}
+		}
+		titlepic.renderpic(renderer);
+		title.rendertext(renderer);
+		newgame.renderbutton(renderer);
+		continuegame.renderbutton(renderer);
+		SDL_RenderPresent(renderer);
+	}
+	return startnew;
+}
 
 void initmaps() {
 	ifstream f("testconfig.dat", ios::binary);
@@ -344,7 +374,7 @@ bool loadScene()
 	bool success = true;
 
 	ifstream f("loadconfig.txt");
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 10; i++) {
 		getline(f, loadconfig[i]);
 	}
 	f.close();
@@ -367,17 +397,32 @@ bool loadScene()
 	}
 
 	if (!attackui.loadpicFromFile(renderer, loadconfig[3].c_str())) {
-		cout << "加载按钮图片失败" << endl;
+		cout << "加载攻击按钮图片失败" << endl;
+		success = false;
+	}
+
+	if (!newgame.loadpicFromFile(renderer, loadconfig[4].c_str())) {
+		cout << "加载新游戏按钮图片失败" << endl;
+		success = false;
+	}
+
+	if (!continuegame.loadpicFromFile(renderer, loadconfig[5].c_str())) {
+		cout << "加载继续游戏按钮图片失败" << endl;
 		success = false;
 	}
 	
-	if (!mainhpui.loadpicFromFile(renderer, loadconfig[4].c_str())) {
+	if (!mainhpui.loadpicFromFile(renderer, loadconfig[6].c_str())) {
 		cout << "加载主页血条图片失败" << endl;
 		success = false;
 	}
 
-	font = TTF_OpenFont(loadconfig[5].c_str(), 30);
-	font2 = TTF_OpenFont(loadconfig[6].c_str(), 20);
+	if (!titlepic.loadpicFromFile(renderer, loadconfig[7].c_str())) {
+		cout << "加载主页标题图片失败" << endl;
+		success = false;
+	}
+
+	font = TTF_OpenFont(loadconfig[8].c_str(), 30);
+	font2 = TTF_OpenFont(loadconfig[9].c_str(), 20);
 	if (!font) {
 		cout << "加载字体文件失败" << endl;
 		success = false;
@@ -385,6 +430,11 @@ bool loadScene()
 
 	if (!bgw.loadtextFromFont(font, renderer, bgwtext, bgwcolor)) {
 		cout << "加载背景文本失败" << endl;
+		success = false;
+	}
+
+	if (!title.loadtextFromFont(font, renderer, titletext, bgwcolor)) {
+		cout << "加载标题文本失败" << endl;
 		success = false;
 	}
 
@@ -512,9 +562,12 @@ int main(int argc, char* argv[])
 			}
 			else {
 				bool quit = false;
-
-				loaddata();
 				SDL_Event e;
+				bool startnew = true;
+				startnew = mainmenu(quit, e);
+				if (!startnew) {
+					loaddata();
+				}
 
 				int wallnum = sceneTexture.initmap(maps[currentmap[0]]);
 				SDL_Rect* trigger[30];
