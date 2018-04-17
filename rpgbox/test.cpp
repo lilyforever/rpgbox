@@ -4,8 +4,8 @@
 #include "fight.h"
 #include "ui.h"
 #include "monster.h"
+#include "music.h"
 #include <fstream>
-#include <Windows.h>
 
 //包含了main函数
 
@@ -180,6 +180,14 @@ string monhpstr;
 Ui monsternameui = Ui(384, 96, 64, 32);
 Ui attackui = Ui(160, 180, 160, 64);
 
+//音效相关
+Mix_Music *mainmenubgm = NULL;
+Mix_Music *mapbgm[10] = { NULL };
+Mix_Music *fightbgm = NULL;
+//1.放按钮上2.点击按钮3.传送音效4.对话音效5.步行音效
+Mix_Chunk *soundeffects[5] = { NULL };
+string musiclist[17];
+
 //string map3str[20] = { "hello, adventure!","ok, i will help you~","", "", "", "", "", "", "", "",
 //									"can you disappear the stone?", "the stone has been disappeared!", "", "", "", "", "", "", "", "", };
 //string mapstr[60] = {
@@ -215,11 +223,12 @@ int currentmap[1] = { 0 };
 bool mainmenu(bool &q, SDL_Event &ev) {
 	bool startnew = false;
 	bool startload = false;
+	Mix_PlayMusic(mainmenubgm, -1);
 	while (!startnew && !startload) {
 		while (SDL_PollEvent(&ev) != 0)
 		{
-			startnew = newgame.handleEvent(ev);
-			startload = continuegame.handleEvent(ev);
+			startnew = newgame.handleEvent(ev, soundeffects[0], soundeffects[1]);
+			startload = continuegame.handleEvent(ev, soundeffects[0], soundeffects[1]);
 			if (ev.type == SDL_QUIT)
 			{
 				q = true;
@@ -232,6 +241,7 @@ bool mainmenu(bool &q, SDL_Event &ev) {
 		continuegame.renderbutton(renderer);
 		SDL_RenderPresent(renderer);
 	}
+	Mix_HaltMusic();
 	return startnew;
 }
 
@@ -335,7 +345,7 @@ bool init()
 {
 	bool success = true;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		cout << "SDL初始化失败" << endl;
 		success = false;
@@ -356,11 +366,20 @@ bool init()
 				cout << "渲染器创建失败" << endl;
 				success = false;
 			}
-		}
-		if (TTF_Init() == -1)
-		{
-			cout << "字体库初始化失败" << endl;
-			success = false;
+			else {
+				if (TTF_Init() == -1)
+				{
+					cout << "字体库初始化失败" << endl;
+					success = false;
+				}
+				else {
+					if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+					{
+						cout << "音乐库初始化失败" << endl;
+						success = false;
+					}
+				}
+			}
 		}
 	}
 	return success;
@@ -368,9 +387,6 @@ bool init()
 
 bool loadScene()
 {
-	const int width = 32;
-	const int height = 32;
-
 	bool success = true;
 
 	ifstream f("loadconfig.txt");
@@ -442,10 +458,10 @@ bool loadScene()
 	else
 	{
 		for (int i = 0; i < 100; i++) {
-			sceneClips[i].x = i % 10 * 32;
-			sceneClips[i].y = i / 10 * 32;
-			sceneClips[i].w = width;
-			sceneClips[i].h = height;
+			sceneClips[i].x = i % 10 * PIXEL_WIDTH;
+			sceneClips[i].y = i / 10 * PIXEL_HEIGHT;
+			sceneClips[i].w = PIXEL_WIDTH;
+			sceneClips[i].h = PIXEL_HEIGHT;
 		}
 	}
 
@@ -503,6 +519,46 @@ bool loadmonster() {
 	return success;
 }
 
+bool loadmusic() {
+	bool success = true;
+	ifstream f("music.txt");
+	for (int i = 0; i < 17; i++) {
+		getline(f, musiclist[i]);
+		cout << musiclist[i] << endl;
+	}
+	f.close();
+
+	mainmenubgm = Mix_LoadMUS(musiclist[0].c_str());
+	if (mainmenubgm == NULL) {
+		std::cout << "加载主菜单音乐失败" << std::endl;
+		success = false;
+	}
+
+	for (int i = 0; i < maptotal[0]; i++) {
+		mapbgm[i] = Mix_LoadMUS(musiclist[i+1].c_str());
+		if (mapbgm[i] == NULL) {
+			std::cout << "加载地图音乐失败" << std::endl;
+			success = false;
+		}
+	}
+
+	fightbgm = Mix_LoadMUS(musiclist[11].c_str());
+	if (fightbgm == NULL) {
+		std::cout << "加载战斗音乐失败" << std::endl;
+		success = false;
+	}
+
+	for (int i = 0; i < 5; i++) {
+		soundeffects[i] = Mix_LoadWAV(musiclist[i + 12].c_str());
+		if (soundeffects[i] == NULL) {
+			cout << musiclist[i + 13] << endl;
+			std::cout << "加载音效文件失败" << std::endl;
+			success = false;
+		}
+	}
+	return success;
+}
+
 void renderscreen() {
 	SDL_RenderClear(renderer);
 
@@ -533,7 +589,10 @@ void close()
 	window = NULL;
 	renderer = NULL;
 	TTF_CloseFont(font);
+	TTF_CloseFont(font2);
 	font = NULL;
+	font2 = NULL;
+	Mix_Quit();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -561,157 +620,208 @@ int main(int argc, char* argv[])
 				cout << "加载怪物文件失败" << endl;
 			}
 			else {
-				bool quit = false;
-				SDL_Event e;
-				bool startnew = true;
-				startnew = mainmenu(quit, e);
-				if (!startnew) {
-					loaddata();
+				if (!loadmusic()) {
+					cout << "加载音乐文件失败" << endl;
 				}
-
-				int wallnum = sceneTexture.initmap(maps[currentmap[0]]);
-				SDL_Rect* trigger[30];
-				for (int i = 0; i < 30; i++) {
-					trigger[i] = sceneTexture.gett(i);
-					/*if (trigger[i]) {
-					cout << trigger[i]->x << endl;
-					}*/
-				}
-				SDL_Rect* wall = sceneTexture.getwall();
-				int jump = 100;
-				/*enum jumpto {
-
-				};*/
-
-				while (!quit)
-				{
-					if (jump == 100) {
-						while (SDL_PollEvent(&e) != 0)
-						{
-							if (e.type == SDL_QUIT)
-							{
-								quit = true;
-							}
-							//cout << jump << endl;
-							cha.handleEvent(e);
-						}
-
-						jump = cha.move(SCREEN_WIDTH, SCREEN_HEIGHT, &sceneTexture, jump);
+				else {
+					bool quit = false;
+					SDL_Event e;
+					bool startnew = true;
+					startnew = mainmenu(quit, e);
+					if (!startnew) {
+						loaddata();
 					}
 
-					if (jump < 10) {
-						wallnum = sceneTexture.initmap(*sceneTexture.getnext(jump));
-						cha.setmposx(sceneTexture.getb(jump)->x);
-						cha.setmposy(sceneTexture.getb(jump)->y);
-						cout << "传送成功" << endl;
-						for (int i = 0; i < 30; i++) {
-							trigger[i] = sceneTexture.gett(i);
-						}
-						wall = sceneTexture.getwall();
-						jump = 100;
-
-						renderscreen();
+					int wallnum = sceneTexture.initmap(maps[currentmap[0]]);
+					Mix_PlayMusic(mapbgm[currentmap[0]], -1);
+					SDL_Rect* trigger[30];
+					for (int i = 0; i < 30; i++) {
+						trigger[i] = sceneTexture.gett(i);
+						/*if (trigger[i]) {
+						cout << trigger[i]->x << endl;
+						}*/
 					}
+					SDL_Rect* wall = sceneTexture.getwall();
+					int jump = 100;
+					/*enum jumpto {
 
-					else if (jump >= 10 && jump < 20) {
-						int currentm = sceneTexture.getnum();
-						int currentt = jump - 10;
-						int talknum = currentm * 10 + currentt;
-						while (SDL_PollEvent(&e) != 0)
-						{
-							if (e.type == SDL_QUIT)
+					};*/
+
+					while (!quit)
+					{
+						if (jump == 100) {
+							while (SDL_PollEvent(&e) != 0)
 							{
-								quit = true;
+								if (e.type == SDL_QUIT)
+								{
+									quit = true;
+								}
+								//cout << jump << endl;
+								cha.handleEvent(e);
 							}
-							cha.handleEvent(e);
-							jump = talk[talknum].handleEvent(e, jump);
+
+							jump = cha.move(SCREEN_WIDTH, SCREEN_HEIGHT, &sceneTexture, jump, soundeffects[4]);
 						}
-						/*if (!talk[talknum].getstate() && cha.gethp() < 115) {*/
-						if (talkstate[currentm][currentt] == 0) {
-							if (jump == 100) {
-								talkstate[currentm][currentt] = 1;
+
+						if (jump < 10) {
+							wallnum = sceneTexture.initmap(*sceneTexture.getnext(jump));
+							currentmap[0] = sceneTexture.getnum();
+							Mix_HaltMusic();
+							Mix_PlayMusic(mapbgm[currentmap[0]], -1);
+							cha.setmposx(sceneTexture.getb(jump)->x);
+							cha.setmposy(sceneTexture.getb(jump)->y);
+							cout << "传送成功" << endl;
+							for (int i = 0; i < 30; i++) {
+								trigger[i] = sceneTexture.gett(i);
 							}
-							talk[talknum].free();
-							talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][0], talkcolor);
+							wall = sceneTexture.getwall();
+							Mix_PlayChannel(-1, soundeffects[2], 0);
+							jump = 100;
+							renderscreen();
+						}
+
+						else if (jump >= 10 && jump < 20) {
+							int currentm = sceneTexture.getnum();
+							int currentt = jump - 10;
+							int talknum = currentm * 10 + currentt;
+							while (SDL_PollEvent(&e) != 0)
+							{
+								if (e.type == SDL_QUIT)
+								{
+									quit = true;
+								}
+								cha.handleEvent(e);
+								jump = talk[talknum].handleEvent(e, jump);
+								if (jump == 100) {
+									Mix_PlayChannel(-1, soundeffects[3], 0);
+								}
+							}
+							/*if (!talk[talknum].getstate() && cha.gethp() < 115) {*/
+							if (talknum != 0) {
+								if (talkstate[currentm][currentt] == 0) {
+									if (jump == 100) {
+										talkstate[currentm][currentt] = 1;
+									}
+									talk[talknum].free();
+									talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][0], talkcolor);
+
+									talk[talknum].render(renderer);
+									SDL_RenderPresent(renderer);
+								}
+								if (talkstate[currentm][currentt] == 1) {
+									if (talknum == 21) {
+										maps[0].mapdata[6][6] = 11;
+										maps[0].walldata[6][6] = 0;
+									}
+									talk[talknum].free();
+									talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][1], talkcolor);
+									talk[talknum].render(renderer);
+									SDL_RenderPresent(renderer);
+								}
+							}
+							else {
+								if (talkstate[currentm][currentt] == 0&&cha.gethp()<115) {
+									if (jump == 100) {
+										talkstate[currentm][currentt] = 1;
+									}
+									talk[talknum].free();
+									talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][0], talkcolor);
+
+									talk[talknum].render(renderer);
+									SDL_RenderPresent(renderer);
+								}
+								if (talkstate[currentm][currentt] == 1 && cha.gethp()<115) {
+									talk[talknum].free();
+									talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][1], talkcolor);
+									talk[talknum].render(renderer);
+									SDL_RenderPresent(renderer);
+								}
+								if (talkstate[currentm][currentt] == 0 && cha.gethp()>=115) {
+									talk[talknum].free();
+									talk[talknum].loadtalkFromFont(font, renderer, "guigui,you . niu pi", talkcolor);
+
+									talk[talknum].render(renderer);
+									SDL_RenderPresent(renderer);
+								}
+								if (talkstate[currentm][currentt] == 1 && cha.gethp()>=115) {
+									talk[talknum].free();
+									talk[talknum].loadtalkFromFont(font, renderer, "congratulations~", talkcolor);
+									talk[talknum].render(renderer);
+									SDL_RenderPresent(renderer);
+								}
+							}
 							
-							talk[talknum].render(renderer);
-							SDL_RenderPresent(renderer);
-						}
-						if(talkstate[currentm][currentt] == 1) {
-							if (talknum == 21) {
-								maps[0].mapdata[6][6] = 11;
-								maps[0].walldata[6][6] = 0;
-							}
-							talk[talknum].free();
-							talk[talknum].loadtalkFromFont(font, renderer, talklist[currentm][currentt][1], talkcolor);
-							talk[talknum].render(renderer);
-							SDL_RenderPresent(renderer);
-						}
-						/*if (talk[talknum].getstate() && cha.gethp() >= 115) {
+							
+							/*if (talk[talknum].getstate() && cha.gethp() >= 115) {
 							talk[talknum].free();
 							talk[talknum].loadtalkFromFont(font, renderer, congratulation, talkcolor);
 							talk[talknum].render(renderer);
 							SDL_RenderPresent(renderer);
-						}
-						if (!talk[talknum].getstate() && cha.gethp() >= 115) {
+							}
+							if (!talk[talknum].getstate() && cha.gethp() >= 115) {
 							talk[talknum].free();
 							talk[talknum].loadtalkFromFont(font, renderer, secretachievement, talkcolor);
 							talk[talknum].render(renderer);
 							SDL_RenderPresent(renderer);
-						}*/
-					}
-
-					else if (jump >= 20 && jump < 30) {
-						int montype = monsterpos[sceneTexture.getnum()][ jump - 20];
-						if (monsterhp[sceneTexture.getnum()][jump - 20] > 0) {
-							bool over = false;
-							monster.sethp(monsterhp[sceneTexture.getnum()][jump - 20]);
-							monster.setatk(monstertype[montype].getatk());
-							cout << montype << endl;
-							SDL_RenderClear(renderer);
-							while (!over) {
-								bool atk = false;
-								while (SDL_PollEvent(&e) != 0)
-								{
-									if (e.type == SDL_QUIT)
-									{
-										quit = true;
-									}
-									cha.handleEvent(e);
-									atk = attackui.handleEvent(e);
-								}
-								charahpui.free();
-								monsterhpui.free();
-								monsternameui.free();
-								fight.free();
-								fight.loadFromFile(renderer, "fight.png");
-								fight.render(renderer);
-								attackui.renderbutton(renderer);
-								int x = cha.getmposx();
-								int y = cha.getmposy();
-								cha.setmposx(64);
-								cha.setmposy(180);
-								cha.render(renderer);
-								monstertype[montype].render(renderer);
-								chahpstr = to_string(cha.gethp());
-								monhpstr = to_string(monster.gethp());
-								charahpui.loadtextFromFont(font2, renderer, chahpstr, talkcolor);
-								monsterhpui.loadtextFromFont(font2, renderer, monhpstr, talkcolor);
-								monsternameui.loadtextFromFont(font, renderer, *monstertype[montype].getname(), talkcolor);
-								charahpui.rendertext(renderer);
-								monsterhpui.rendertext(renderer);
-								monsternameui.rendertext(renderer);
-								SDL_RenderPresent(renderer);
-								over = fight.fightprocess(&cha, &monster, atk, over);
-								monsterhp[sceneTexture.getnum()][jump - 20] = monster.gethp();
-								cha.setmposx(x);
-								cha.setmposy(y);
-							}
+							}*/
 						}
-						jump = 100;
-					}
-					else {
-						renderscreen();
+
+						else if (jump >= 20 && jump < 30) {
+							int montype = monsterpos[sceneTexture.getnum()][jump - 20];
+							if (monsterhp[sceneTexture.getnum()][jump - 20] > 0) {
+								Mix_HaltMusic();
+								Mix_PlayMusic(fightbgm, -1);
+								bool over = false;
+								monster.sethp(monsterhp[sceneTexture.getnum()][jump - 20]);
+								monster.setatk(monstertype[montype].getatk());
+								cout << montype << endl;
+								SDL_RenderClear(renderer);
+								while (!over) {
+									bool atk = false;
+									while (SDL_PollEvent(&e) != 0)
+									{
+										if (e.type == SDL_QUIT)
+										{
+											quit = true;
+										}
+										cha.handleEvent(e);
+										atk = attackui.handleEvent(e, soundeffects[0], soundeffects[1]);
+									}
+									charahpui.free();
+									monsterhpui.free();
+									monsternameui.free();
+									fight.free();
+									fight.loadFromFile(renderer, "fight.png");
+									fight.render(renderer);
+									attackui.renderbutton(renderer);
+									int x = cha.getmposx();
+									int y = cha.getmposy();
+									cha.setmposx(64);
+									cha.setmposy(180);
+									cha.render(renderer);
+									monstertype[montype].render(renderer);
+									chahpstr = to_string(cha.gethp());
+									monhpstr = to_string(monster.gethp());
+									charahpui.loadtextFromFont(font2, renderer, chahpstr, talkcolor);
+									monsterhpui.loadtextFromFont(font2, renderer, monhpstr, talkcolor);
+									monsternameui.loadtextFromFont(font, renderer, *monstertype[montype].getname(), talkcolor);
+									charahpui.rendertext(renderer);
+									monsterhpui.rendertext(renderer);
+									monsternameui.rendertext(renderer);
+									SDL_RenderPresent(renderer);
+									over = fight.fightprocess(&cha, &monster, atk, over);
+									monsterhp[sceneTexture.getnum()][jump - 20] = monster.gethp();
+									cha.setmposx(x);
+									cha.setmposy(y);
+								}
+								Mix_HaltMusic();
+								Mix_PlayMusic(mapbgm[currentmap[0]], -1);
+							}
+							jump = 100;
+						}
+						else {
+							renderscreen();
+						}
 					}
 				}
 			}

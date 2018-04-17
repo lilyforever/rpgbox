@@ -1,0 +1,17 @@
+mainbgm.mp3
+map1bgm.wav
+map2bgm.wav
+map3bgm.wav
+
+
+
+
+
+
+
+fightbgm.wav
+click.wav
+click.wav
+portal.wav
+click.wav
+walk.wav

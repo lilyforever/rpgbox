@@ -39,6 +39,9 @@
     <ClInclude Include="ui.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="music.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="map.cpp">
@@ -68,11 +71,15 @@
     <ClCompile Include="ui.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="music.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\sdllib\SDL2.lib" />
     <Library Include="..\sdllib\SDL2_image.lib" />
     <Library Include="..\sdllib\SDL2main.lib" />
     <Library Include="..\sdllib\SDL2_ttf.lib" />
+    <Library Include="..\sdllib\SDL2_mixer.lib" />
   </ItemGroup>
 </Project>

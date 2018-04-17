@@ -122,6 +122,7 @@
     <ClInclude Include="loadimg.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="monster.h" />
+    <ClInclude Include="music.h" />
     <ClInclude Include="talk.h" />
     <ClInclude Include="ui.h" />
   </ItemGroup>
@@ -132,6 +133,7 @@
     <ClCompile Include="loadimg.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="monster.cpp" />
+    <ClCompile Include="music.cpp" />
     <ClCompile Include="talk.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="ui.cpp" />
@@ -140,6 +142,7 @@
     <Library Include="..\sdllib\SDL2.lib" />
     <Library Include="..\sdllib\SDL2main.lib" />
     <Library Include="..\sdllib\SDL2_image.lib" />
+    <Library Include="..\sdllib\SDL2_mixer.lib" />
     <Library Include="..\sdllib\SDL2_ttf.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

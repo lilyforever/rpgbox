@@ -80,7 +80,7 @@ void Ui::free() {
 		mHeight = 0;
 }
 
-bool Ui::handleEvent(SDL_Event& e) {
+bool Ui::handleEvent(SDL_Event& e, Mix_Chunk *inse, Mix_Chunk *downse) {
 	bool success = false;
 	if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
 		int x, y;
@@ -96,9 +96,11 @@ bool Ui::handleEvent(SDL_Event& e) {
 			switch (e.type) {
 			case SDL_MOUSEMOTION:
 				state = IN;
+				Mix_PlayChannel(-1, inse, 0);
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				state = DOWN;
+				Mix_PlayChannel(-1, downse, 0);
 				success = true;
 				cout << "success is true" << endl;
 				break;

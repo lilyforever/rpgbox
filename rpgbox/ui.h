@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include "loadimg.h"
-
+#include "SDL_mixer.h"
 using namespace std;
 
 enum uistate {
@@ -21,10 +21,10 @@ public:
 	Ui();
 	Ui(int x, int y, int w, int h);
 	~Ui();
-	bool loadpicFromFile(SDL_Renderer* renderer, std::string path);
+	bool loadpicFromFile(SDL_Renderer* renderer, string path);
 	bool loadtextFromFont(TTF_Font* font, SDL_Renderer* renderer, string Ui, SDL_Color Uicolor);
 	void free();
-	bool handleEvent(SDL_Event& e);
+	bool handleEvent(SDL_Event& e, Mix_Chunk *inse, Mix_Chunk *downse);
 	void renderbutton(SDL_Renderer* renderer);
 	void renderpic(SDL_Renderer* renderer);
 	void rendertext(SDL_Renderer* renderer);

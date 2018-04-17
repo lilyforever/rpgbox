@@ -74,7 +74,10 @@ void Character::handleEvent(SDL_Event& e) {
 	}
 }
 
-int Character::move(int x,int y, MapTexture* m, int jump) {
+int Character::move(int x,int y, MapTexture* m, int jump, Mix_Chunk *w) {
+	if (m_vx != 0 || m_vy != 0) {
+		Mix_PlayChannel(-1, w, 0);
+	}
 	m_posx += m_vx;
 	mCollision.x = m_posx;
 
